@@ -5,6 +5,7 @@ node_js:
   - "10"
   - "node"
 stages:
+  - build
   - lint
   - test
   - release
@@ -12,6 +13,8 @@ jobs:
   include:
     - stage: lint
       script: npm run lint
+    - stage: build
+      script: npm run build
     - stage: test
       script: npm run test
     # Define the release stage that runs semantic-release
