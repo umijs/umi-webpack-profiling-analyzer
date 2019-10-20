@@ -1,63 +1,63 @@
 version: 2.1
 jobs:
   install:
-    working_directory: /tmp
+    working_directory: /tmp/workspace
     docker:
       - image: 'circleci/node:latest'
     steps:
       - checkout
       - attach_workspace:
-          at: /tmp
+          at: /tmp/workspace
       - run:
           name: install
           command: npm install
       - persist_to_workspace:
-          root: /tmp
+          root: /tmp/workspace
           paths: node_modules
   lint:
-    working_directory: /tmp
+    working_directory: /tmp/workspace
     docker:
       - image: 'circleci/node:latest'
     steps:
       - checkout
       - attach_workspace:
-          at: /tmp
+          at: /tmp/workspace
       - run:
           name: lint
           command: npm run lint
   build:
-    working_directory: /tmp
+    working_directory: /tmp/workspace
     docker:
       - image: 'circleci/node:latest'
     steps:
       - checkout
       - attach_workspace:
-          at: /tmp
+          at: /tmp/workspace
       - run:
           name: build lib
           command: npm run build
       - persist_to_workspace:
-          root: /tmp
+          root: /tmp/workspace
           paths: lib
   test:
-    working_directory: /tmp
+    working_directory: /tmp/workspace
     docker:
       - image: 'circleci/node:latest'
     steps:
       - checkout
       - attach_workspace:
-          at: /tmp
+          at: /tmp/workspace
       - run:
           name: test
           command: npm run test
   release:
-    working_directory: /tmp
+    working_directory: /tmp/workspace
     docker:
       - image: 'circleci/node:latest'
     steps:
       - checkout
       - attach_workspace:
-          at: /tmp
+          at: /tmp/workspace
       - run:
           name: semantic-release
           command: npm run semantic-release || true
