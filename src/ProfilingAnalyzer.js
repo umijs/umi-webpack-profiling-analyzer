@@ -7,10 +7,9 @@ class ProfilingAnalyzer {
   apply(compiler) {
     this.compiler = compiler;
 
-    function done(stats, callback) {
+    function done(curCompiler, callback) {
       callback = callback || (() => {});
-      console.log('done', stats, callback);
-
+      console.log('done', curCompiler.getStats().toJson());
 
       callback();
     }
