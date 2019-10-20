@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 jobs:
   install:
     working_directory: ~/wpa-project
@@ -9,11 +9,11 @@ jobs:
       - attach_workspace:
           at: ~/wpa-project
       - run:
-        name: install
-        command: npm install
+          name: install
+          command: npm install
       - persist_to_workspace:
-        root: ~/wpa-project
-        paths: ./node_modules
+          root: ~/wpa-project
+          paths: ./node_modules
   lint:
     working_directory: ~/wpa-project
     docker:
@@ -37,8 +37,8 @@ jobs:
           name: build lib
           command: npm run build
       - persist_to_workspace:
-        root: ~/wpa-project
-        paths: ./build
+          root: ~/wpa-project
+          paths: ./build
   test:
     working_directory: ~/wpa-project
     docker:
@@ -59,7 +59,7 @@ jobs:
       - attach_workspace:
           at: ~/wpa-project
       - run:
-        name: semantic-release
-        command: npm run semantic-release || true
+          name: semantic-release
+          command: npm run semantic-release || true
 
 
