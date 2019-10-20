@@ -13,8 +13,7 @@ jobs:
     - stage: lint
       script: npm run lint
     - stage: test
-      script: npm run build
-      script: npm run test
+      script: npm run build && npm run test
     # Define the release stage that runs semantic-release
     - stage: release
       node_js: lts/*
