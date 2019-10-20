@@ -1,0 +1,9 @@
+{
+  "root": true,
+  "extends": "th0r",
+  "globals": {
+    "describe": true,
+    "it": true,
+    "expect": true
+  }
+}

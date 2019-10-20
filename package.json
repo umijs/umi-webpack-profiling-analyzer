@@ -1,0 +1,38 @@
+{
+  "name": "umi-webpack-profiling-analyzer",
+  "version": "0.0.0-development",
+  "description": "Webpack plugin and CLI utility that represents module compilation stats",
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "eslint --ext js,jsx .",
+    "test": "mocha --exit --require @babel/register",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/umijs/umi-webpack-profiling-analyzer.git"
+  },
+  "keywords": [
+    "webpack",
+    "analyze",
+    "compilation",
+    "stats"
+  ],
+  "author": "RaoHai",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/umijs/umi-webpack-profiling-analyzer/issues"
+  },
+  "homepage": "https://github.com/umijs/umi-webpack-profiling-analyzer#readme",
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@babel/register": "^7.6.2",
+    "babel-eslint": "^10.0.3",
+    "chai": "^4.2.0",
+    "chai-subset": "^1.6.0",
+    "eslint": "^5.16.0",
+    "eslint-config-th0r": "^2.0.0",
+    "mocha": "^6.2.2",
+    "semantic-release": "^15.13.27"
+  }
+}
