@@ -1,63 +1,63 @@
 version: 2.1
 jobs:
   install:
-    working_directory: ~/wpa-project
+    working_directory: /tmp
     docker:
       - image: 'circleci/node:latest'
     steps:
       - checkout
       - attach_workspace:
-          at: ~/wpa-project
+          at: /tmp
       - run:
           name: install
           command: npm install
       - persist_to_workspace:
-          root: ~/wpa-project
-          paths: ./node_modules
+          root: /tmp
+          paths: node_modules
   lint:
-    working_directory: ~/wpa-project
+    working_directory: /tmp
     docker:
       - image: 'circleci/node:latest'
     steps:
       - checkout
       - attach_workspace:
-          at: ~/wpa-project
+          at: /tmp
       - run:
           name: lint
           command: npm run lint
   build:
-    working_directory: ~/wpa-project
+    working_directory: /tmp
     docker:
       - image: 'circleci/node:latest'
     steps:
       - checkout
       - attach_workspace:
-          at: ~/wpa-project
+          at: /tmp
       - run:
           name: build lib
           command: npm run build
       - persist_to_workspace:
-          root: ~/wpa-project
-          paths: ./build
+          root: /tmp
+          paths: lib
   test:
-    working_directory: ~/wpa-project
+    working_directory: /tmp
     docker:
       - image: 'circleci/node:latest'
     steps:
       - checkout
       - attach_workspace:
-          at: ~/wpa-project
+          at: /tmp
       - run:
           name: test
           command: npm run test
   release:
-    working_directory: ~/wpa-project
+    working_directory: /tmp
     docker:
       - image: 'circleci/node:latest'
     steps:
       - checkout
       - attach_workspace:
-          at: ~/wpa-project
+          at: /tmp
       - run:
           name: semantic-release
           command: npm run semantic-release || true
@@ -72,7 +72,7 @@ workflows:
             - install
       - build:
           requires:
-            - lint
+            - install
       - test:
           requires:
             - build
