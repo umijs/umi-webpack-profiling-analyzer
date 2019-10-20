@@ -61,5 +61,21 @@ jobs:
       - run:
           name: semantic-release
           command: npm run semantic-release || true
+workflows:
+  version: 2
 
-
+  btd:
+    jobs:
+      - install
+      - lint:
+          requires:
+            - install
+      - build:
+          requires:
+            - lint
+      - test:
+          requires:
+            - build
+      - release:
+          requires:
+            - test
