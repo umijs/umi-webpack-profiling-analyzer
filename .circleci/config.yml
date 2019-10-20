@@ -1,0 +1,65 @@
+version: 2
+jobs:
+  install:
+    working_directory: ~/wpa-project
+    docker:
+      - image: 'circleci/node:latest'
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/wpa-project
+      - run:
+        name: install
+        command: npm install
+      - persist_to_workspace:
+        root: ~/wpa-project
+        paths: ./node_modules
+  lint:
+    working_directory: ~/wpa-project
+    docker:
+      - image: 'circleci/node:latest'
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/wpa-project
+      - run:
+          name: lint
+          command: npm run lint
+  build:
+    working_directory: ~/wpa-project
+    docker:
+      - image: 'circleci/node:latest'
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/wpa-project
+      - run:
+          name: build lib
+          command: npm run build
+      - persist_to_workspace:
+        root: ~/wpa-project
+        paths: ./build
+  test:
+    working_directory: ~/wpa-project
+    docker:
+      - image: 'circleci/node:latest'
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/wpa-project
+      - run:
+          name: test
+          command: npm run test
+  release:
+    working_directory: ~/wpa-project
+    docker:
+      - image: 'circleci/node:latest'
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/wpa-project
+      - run:
+        name: semantic-release
+        command: npm run semantic-release || true
+
+
