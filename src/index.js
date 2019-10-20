@@ -1,4 +1,4 @@
 
 module.exports = {
-  ProfilingAnalyze: require('./ProfilingAnalyze')
+  ProfilingAnalyzer: require('./ProfilingAnalyzer')
 };

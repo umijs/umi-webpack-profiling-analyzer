@@ -4,6 +4,8 @@
   "globals": {
     "describe": true,
     "it": true,
-    "expect": true
+    "expect": true,
+    "makeWebpackConfig": true,
+    "webpackCompile": true
   }
 }

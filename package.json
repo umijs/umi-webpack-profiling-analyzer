@@ -6,6 +6,8 @@
   "scripts": {
     "lint": "eslint --ext js,jsx .",
     "test": "mocha --exit --require @babel/register",
+    "build": "npx babel src -d lib",
+    "watch": "npx babel src --watch -d lib",
     "semantic-release": "semantic-release"
   },
   "repository": {
@@ -25,14 +27,20 @@
   },
   "homepage": "https://github.com/umijs/umi-webpack-profiling-analyzer#readme",
   "devDependencies": {
+    "@babel/cli": "^7.6.4",
     "@babel/core": "^7.6.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.6.3",
     "@babel/register": "^7.6.2",
     "babel-eslint": "^10.0.3",
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
     "eslint": "^5.16.0",
     "eslint-config-th0r": "^2.0.0",
+    "lodash": "^4.17.15",
     "mocha": "^6.2.2",
-    "semantic-release": "^15.13.27"
+    "semantic-release": "^15.13.27",
+    "webpack": "^4.41.2",
+    "webpack-dev-server": "^3.8.2"
   }
 }
