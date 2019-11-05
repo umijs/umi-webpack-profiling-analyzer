@@ -1,11 +1,14 @@
 const viewer = require('./viewer');
-const {getModuleName, getModuleLoaders} = require('./utils');
+const {getModuleName, getModuleLoaders, generateStaticReport} = require('./utils');
 
 const HOOKS_NS = 'ProfilingAnalyzer';
 
 class ProfilingAnalyzer {
   constructor(options = {}) {
-    this.options = options;
+    this.options = {
+      analyzerMode: 'server',
+      ...options
+    };
     this.moduleProfiling = {};
   }
 
@@ -57,9 +60,42 @@ class ProfilingAnalyzer {
     compiler.hooks.done.tapAsync(`${HOOKS_NS}:done`, this.done.bind(this));
   }
 
+  /**
+   * generater static report json file
+   * @param {object} profileData Profile data
+   */
+  async generateStaticReport(profileData) {
+    return generateStaticReport(profileData, this.options);
+  }
+
+  /**
+   * start local server to display stats report
+   * @param {object} profileData Profile data
+   */
+  async startAnalyzerServer(profileData) {
+    if (this.server) {
+      await this.server.updateData(profileData);
+    } else {
+      this.server = await viewer.startAnalyzerServer(profileData, this.options);
+    }
+
+  }
+
+  /**
+   * generater stats data
+   * @param {*} stats webpack stats data
+   */
   async generateProfileData(stats) {
     const {context} = this.compiler;
-    await viewer.generateProfileData(context, stats, this.moduleProfiling, this.options);
+    const {analyzerMode} = this.options;
+
+    const profileData = await viewer.generateProfileData(context, stats, this.moduleProfiling, this.options);
+
+    if (analyzerMode === 'server') {
+      await this.startAnalyzerServer(profileData);
+    } else {
+      await this.generateStaticReport(profileData);
+    }
   }
 }
 

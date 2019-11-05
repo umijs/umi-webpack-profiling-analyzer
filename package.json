@@ -4,8 +4,11 @@
   "description": "Webpack plugin and CLI utility that represents module compilation stats",
   "main": "lib/index.js",
   "scripts": {
+    "start": "webpack",
     "lint": "eslint --ext js,jsx .",
     "test": "mocha --exit --require @babel/register && cat test/output/profile.json",
+    "test-dev": "mocha --watch --require @babel/register",
+    "dev": "./node_modules/.bin/webpack-dev-server --config test/dev-server/webpack.config.js",
     "build": "npx babel src -d lib",
     "watch": "npx babel src --watch -d lib",
     "semantic-release": "semantic-release"
@@ -36,16 +39,20 @@
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
     "css-loader": "^3.2.0",
+    "ejs": "^2.7.1",
     "eslint": "^5.16.0",
     "eslint-config-th0r": "^2.0.0",
+    "express": "^4.17.1",
     "less": "^3.0.0",
     "less-loader": "^5.0.0",
     "lodash": "^4.17.15",
     "mkdirp": "^0.5.1",
     "mocha": "^6.2.2",
+    "opener": "^1.5.1",
     "semantic-release": "^15.13.27",
     "style-loader": "^1.0.0",
     "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.8.2"
   }
 }
