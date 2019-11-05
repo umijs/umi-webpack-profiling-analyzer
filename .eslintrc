@@ -1,11 +1,16 @@
 {
   "root": true,
   "extends": "th0r",
+  "rules": {
+    "require-unicode-regexp": 0,
+    "no-useless-escape": 0
+  },
   "globals": {
     "describe": true,
     "it": true,
     "expect": true,
     "makeWebpackConfig": true,
-    "webpackCompile": true
+    "webpackCompile": true,
+    "expectFile": true
   }
 }

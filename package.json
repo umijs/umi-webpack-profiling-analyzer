@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint --ext js,jsx .",
-    "test": "mocha --exit --require @babel/register",
+    "test": "mocha --exit --require @babel/register && cat test/output/profile.json",
     "build": "npx babel src -d lib",
     "watch": "npx babel src --watch -d lib",
     "semantic-release": "semantic-release"
@@ -35,11 +35,16 @@
     "babel-eslint": "^10.0.3",
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
+    "css-loader": "^3.2.0",
     "eslint": "^5.16.0",
     "eslint-config-th0r": "^2.0.0",
+    "less": "^3.0.0",
+    "less-loader": "^5.0.0",
     "lodash": "^4.17.15",
+    "mkdirp": "^0.5.1",
     "mocha": "^6.2.2",
     "semantic-release": "^15.13.27",
+    "style-loader": "^1.0.0",
     "webpack": "^4.41.2",
     "webpack-dev-server": "^3.8.2"
   }

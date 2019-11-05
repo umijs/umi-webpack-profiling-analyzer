@@ -1,4 +1,6 @@
 const chai = require('chai');
+const fs = require('fs');
+const path = require('path');
 const _ = require('lodash');
 const webpack = require('webpack');
 const ProfilingAnalyzerPlugin = require('../lib/ProfilingAnalyzer');
@@ -8,6 +10,7 @@ chai.use(require('chai-subset'));
 global.expect = chai.expect;
 global.webpackCompile = webpackCompile;
 global.makeWebpackConfig = makeWebpackConfig;
+global.expectFile = expectFile;
 
 function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -34,7 +37,7 @@ async function webpackCompile(config) {
 function makeWebpackConfig(opts) {
   opts = _.merge({
     profilingAnalyzerOptions: {
-
+      bundleDir: `${__dirname}/output`
     },
     minify: false,
     multipleChunks: false
@@ -50,10 +53,37 @@ function makeWebpackConfig(opts) {
       path: `${__dirname}/output`,
       filename: '[name].js'
     },
+    stats: {
+      modules: true
+    },
     optimization: {
       runtimeChunk: {
         name: 'manifest'
       }
+    },
+    module: {
+      rules: [
+        {
+          test: /\.less$/u,
+          use: [
+            {
+              loader: 'style-loader'
+            },
+            {
+              loader: 'css-loader',
+              options: {
+                sourceMap: true
+              }
+            },
+            {
+              loader: 'less-loader',
+              options: {
+                sourceMap: true
+              }
+            }
+          ]
+        }
+      ]
     },
     plugins: (plugins => {
       plugins.push(
@@ -76,4 +106,10 @@ function makeWebpackConfig(opts) {
       return plugins;
     })([])
   };
+}
+
+function expectFile(url) {
+  const filePath = path.resolve(__dirname, url);
+  const exists = fs.existsSync(filePath);
+  expect(exists);
 }

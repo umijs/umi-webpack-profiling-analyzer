@@ -23,7 +23,7 @@ describe('Profiling Analyzer Plugin', () => {
       config.output.jsonpFunction = 'somethingCompletelyDifferent';
 
       await webpackCompile(config);
-      expect(true);
+      expectFile('output/profile.json');
     });
   });
 });
