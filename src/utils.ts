@@ -1,7 +1,7 @@
-const {inspect} = require('util');
-const _ = require('lodash');
+import {inspect} from 'util';
+import _ from 'lodash';
 
-function createAssetsFilter(excludePatterns) {
+export function createAssetsFilter(excludePatterns) {
   const excludeFunctions = _(excludePatterns)
     .castArray()
     .compact()
@@ -35,7 +35,7 @@ function createAssetsFilter(excludePatterns) {
  * inspired from speed-measure-webpack-plugin
  * @param {*} loaders loaders
  */
-function getModuleLoaders(module) {
+export function getModuleLoaders(module) {
   return module.loaders && module.loaders.length
     ? module.loaders
       .map(l => l.loader || l)
@@ -54,7 +54,7 @@ function getModuleLoaders(module) {
  * e.g. node_modules/less-loader/dist/cjs.js??ref--4-2!/src/c.less => /src/c.less
  * @param {*} module
  */
-function getModuleName(module) {
+export function getModuleName(module) {
   return module.userRequest.replace(
     /^.*\/(@[a-z0-9][\w-.]+\/[a-z0-9][\w-.]*|[^\/]+)\?\?(@[a-z0-9][\w-.]+\/[a-z0-9][\w-.]*|[^\/]+)!/,
     '',
@@ -66,28 +66,23 @@ function getModuleName(module) {
  * @param {string} path raw path
  * @param {string} context webpack context path
  */
-function getRelativePath(path, context) {
+export function getRelativePath(path, context) {
   return path.replace(context + '/', '');
 }
 
-function getNodeModulesRelativePath(path) {
+export function getNodeModulesRelativePath(path) {
   return path.replace(/^.*\/(node_modules\/)/, (_, m) => m);
 }
 
 const MULTI_MODULE_REGEXP = /^multi /u;
 
-function getModulePathParts(path) {
+export function getModulePathParts(path) {
   if (MULTI_MODULE_REGEXP.test(path)) {
     return [path];
   }
   return path.split('/');
 }
 
-module.exports = {
-  createAssetsFilter,
-  getModuleLoaders,
-  getModuleName,
-  getRelativePath,
-  getNodeModulesRelativePath,
-  getModulePathParts
-};
+export function generateStaticReport(profileData, options) {
+
+}

@@ -9,8 +9,8 @@
     "test": "mocha --exit --require @babel/register && cat test/output/profile.json",
     "test-dev": "mocha --watch --require @babel/register",
     "dev": "./node_modules/.bin/webpack-dev-server --config test/dev-server/webpack.config.js",
-    "build": "npx babel src -d lib",
-    "watch": "npx babel src --watch -d lib",
+    "build": "npx babel src -d lib --extensions \".ts\"",
+    "watch": "npx babel src --watch -d lib --extensions \".ts\"",
     "semantic-release": "semantic-release"
   },
   "repository": {
@@ -38,8 +38,11 @@
     "@babel/polyfill": "7.4.3",
     "@babel/preset-env": "^7.6.3",
     "@babel/preset-react": "7.0.0",
+    "@babel/preset-typescript": "^7.7.2",
     "@babel/register": "^7.6.2",
     "@babel/runtime": "7.4.3",
+    "@types/webpack": "^4.39.8",
+    "@types/ws": "^6.0.3",
     "autoprefixer": "9.5.1",
     "babel-eslint": "^10.0.3",
     "babel-loader": "8.0.5",
@@ -63,9 +66,9 @@
     "react-dom": "^16.11.0",
     "semantic-release": "^15.13.27",
     "style-loader": "^1.0.0",
+    "typescript": "^3.7.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.8.2",
-    "ws": "^7.2.0"
+    "webpack-dev-server": "^3.8.2"
   }
 }

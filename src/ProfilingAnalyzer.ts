@@ -1,9 +1,21 @@
-const viewer = require('./viewer');
-const {getModuleName, getModuleLoaders, generateStaticReport} = require('./utils');
+import { Compiler } from 'webpack';
+
+import { startAnalyzerServer, generateProfileData, Server } from './viewer';
+import {getModuleName, getModuleLoaders, generateStaticReport} from './utils';
+
 
 const HOOKS_NS = 'ProfilingAnalyzer';
 
-class ProfilingAnalyzer {
+export interface ProfilingAnalyzerOptions {
+  analyzerMode: 'server' | 'client';
+}
+
+export class ProfilingAnalyzer {
+  private options: ProfilingAnalyzerOptions;
+  private moduleProfiling: {};
+  private compiler: Compiler;
+  private server: Server;
+
   constructor(options = {}) {
     this.options = {
       analyzerMode: 'server',
@@ -76,7 +88,7 @@ class ProfilingAnalyzer {
     if (this.server) {
       await this.server.updateProfileData(profileData, this.options);
     } else {
-      this.server = await viewer.startAnalyzerServer(profileData, this.options);
+      this.server = await startAnalyzerServer(profileData, this.options);
     }
 
   }
@@ -89,7 +101,7 @@ class ProfilingAnalyzer {
     const {context} = this.compiler;
     const {analyzerMode} = this.options;
 
-    const profileData = await viewer.generateProfileData(context, stats, this.moduleProfiling, this.options);
+    const profileData = await generateProfileData(context, stats, this.moduleProfiling, this.options);
 
     if (analyzerMode === 'server') {
       await this.startAnalyzerServer(profileData);
@@ -98,5 +110,3 @@ class ProfilingAnalyzer {
     }
   }
 }
-
-module.exports = ProfilingAnalyzer;

@@ -1,24 +1,24 @@
-const path = require('path');
-const fs = require('fs');
-const express = require('express');
-const mkdir = require('mkdirp');
-const http = require('http');
-const opener = require('opener');
+import * as WebSocket from 'ws';
+import * as path from 'path';
+import * as fs from 'fs';
+import express from 'express';
+import mkdir from 'mkdirp';
+import http from 'http';
+import opener from 'opener';
+import { AddressInfo } from 'net';
 
-const WebSocket = require('ws');
-
-const {createAssetsFilter, getRelativePath, getNodeModulesRelativePath} = require('./utils');
-const {Folder} = require('./analyze/folder');
+import {createAssetsFilter, getRelativePath, getNodeModulesRelativePath} from './utils';
+import {Folder} from './analyze/folder';
 
 const projectRoot = path.resolve(__dirname, '..');
 // const assetsRoot = path.join(projectRoot, 'public');
 const title = `${process.env.npm_package_name || 'Webpack Profiling Analyzer'} [${Date.now()}]`;
 
-module.exports = {
-  generateProfileData,
-  generateStaticReport,
-  startAnalyzerServer
-};
+export interface Server {
+  ws: WebSocket.Server;
+  http: http.Server;
+  updateProfileData: (data: {}, options: {}) => any;
+}
 
 /**
  *
@@ -26,7 +26,7 @@ module.exports = {
  * @param {Stats} stats compile hooks stats
  * @param {Map<string, number>} profilingMap modules timing consuming of each modules
  */
-async function generateProfileData(context, stats, profilingMap, options) {
+export async function generateProfileData(context, stats, profilingMap, options) {
   const {excludeAssets = ['webpack/buildin', 'webpack-dev-server']} = options;
   const nodeModules = path.join(context, 'node_modules');
 
@@ -49,7 +49,7 @@ async function generateProfileData(context, stats, profilingMap, options) {
   return groupedProfilingMap;
 }
 
-async function generateClientData(profileData, options) {
+export async function generateClientData(profileData, options) {
   if (!profileData) {
     return {};
   }
@@ -58,7 +58,7 @@ async function generateClientData(profileData, options) {
 }
 
 
-async function generateStaticReport(profileData, options) {
+export async function generateStaticReport(profileData, options) {
   const {
     reportFileName = 'profile.json',
     bundleDir = null
@@ -70,7 +70,7 @@ async function generateStaticReport(profileData, options) {
   fs.writeFileSync(reportFilePath, JSON.stringify(profileData, null, '\t'));
 }
 
-async function startAnalyzerServer(profileData, options) {
+export async function startAnalyzerServer(profileData, options): Promise<Server> {
   const {
     port = 8888,
     host = '127.0.0.1',
@@ -107,7 +107,7 @@ async function startAnalyzerServer(profileData, options) {
   await new Promise(resolve => {
     server.listen(port, host, () => {
       resolve();
-      const url = `http://${host}:${server.address().port}`;
+      const url = `http://${host}:${(server.address() as AddressInfo).port}`;
       console.log(`Webpack Profiling Analyzer is started at ${url}`);
 
       if (openBrowser) {
@@ -120,9 +120,6 @@ async function startAnalyzerServer(profileData, options) {
 
   wss.on('connection', ws => {
     ws.on('error', err => {
-      // Ignore network errors like `ECONNRESET`, `EPIPE`, etc.
-      if (err.errno) return;
-
       console.info(err.message);
     });
   });
