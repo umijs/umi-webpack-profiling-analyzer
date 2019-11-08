@@ -74,10 +74,20 @@ function getNodeModulesRelativePath(path) {
   return path.replace(/^.*\/(node_modules\/)/, (_, m) => m);
 }
 
+const MULTI_MODULE_REGEXP = /^multi /u;
+
+function getModulePathParts(path) {
+  if (MULTI_MODULE_REGEXP.test(path)) {
+    return [path];
+  }
+  return path.split('/');
+}
+
 module.exports = {
   createAssetsFilter,
   getModuleLoaders,
   getModuleName,
   getRelativePath,
-  getNodeModulesRelativePath
+  getNodeModulesRelativePath,
+  getModulePathParts
 };

@@ -74,7 +74,7 @@ class ProfilingAnalyzer {
    */
   async startAnalyzerServer(profileData) {
     if (this.server) {
-      await this.server.updateData(profileData);
+      await this.server.updateProfileData(profileData, this.options);
     } else {
       this.server = await viewer.startAnalyzerServer(profileData, this.options);
     }
