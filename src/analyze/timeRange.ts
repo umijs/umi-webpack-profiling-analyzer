@@ -31,11 +31,12 @@ export class TimeRange {
 
       // otherwise, the incoming node cross or cover origin nodes
       const insertPoint = this.getLast(curr => curr && curr.start < start);
-      const tailPoint = this.getFirst(curr => curr && curr.end > end);
+      const tailPoint = this.getFirst(curr => curr && curr.end > end, insertPoint);
       // both have insert pint and tail point, combine theses points
       if (insertPoint && tailPoint) {
-        // cross two points
-        if (insertPoint.end >= start && tailPoint.start <= end) {
+        if (insertPoint === tailPoint) {
+          return;
+        } else if (insertPoint.end >= start && tailPoint.start <= end) {
           insertPoint.end = tailPoint.end;
           insertPoint.next = tailPoint.next;
         } else if (insertPoint.end > start) {
@@ -76,6 +77,9 @@ export class TimeRange {
       throw new Error(`${iterator} is not a function`);
     }
     let curr = this.head;
+    if (!curr) {
+      return null;
+    }
     let cumulative;
     if (arguments.length >= 2) {
       cumulative = initialValue;

@@ -1,22 +1,23 @@
-const chai = require('chai');
-const fs = require('fs');
-const path = require('path');
-const _ = require('lodash');
-const webpack = require('webpack');
-const ProfilingAnalyzerPlugin = require('../lib/ProfilingAnalyzer').ProfilingAnalyzer;
+import { use, expect } from 'chai';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as _ from 'lodash';
+import * as webpack from 'webpack';
+import { ProfilingAnalyzer } from '../src/ProfilingAnalyzer';
 
-chai.use(require('chai-subset'));
+use(require('chai-subset'));
 
-global.expect = chai.expect;
-global.webpackCompile = webpackCompile;
-global.makeWebpackConfig = makeWebpackConfig;
-global.expectFile = expectFile;
+
+(global as any).expect = expect;
+(global as any).webpackCompile = webpackCompile;
+(global as any).makeWebpackConfig = makeWebpackConfig;
+(global as any).expectFile = expectFile;
 
 function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function webpackCompile(config) {
+export async function webpackCompile(config) {
   await new Promise((resolve, reject) => {
     webpack(config, (err, stats) => {
       if (err) {
@@ -34,7 +35,7 @@ async function webpackCompile(config) {
   await timeout(1);
 }
 
-function makeWebpackConfig(opts) {
+export function makeWebpackConfig(opts) {
   opts = _.merge({
     profilingAnalyzerOptions: {
       bundleDir: `${__dirname}/output`
@@ -87,7 +88,7 @@ function makeWebpackConfig(opts) {
     },
     plugins: (plugins => {
       plugins.push(
-        new ProfilingAnalyzerPlugin(opts.profilingAnalyzerOptions)
+        new ProfilingAnalyzer(opts.profilingAnalyzerOptions)
       );
 
       if (opts.minify) {
@@ -108,7 +109,7 @@ function makeWebpackConfig(opts) {
   };
 }
 
-function expectFile(url) {
+export function expectFile(url) {
   const filePath = path.resolve(__dirname, url);
   const exists = fs.existsSync(filePath);
   expect(exists);

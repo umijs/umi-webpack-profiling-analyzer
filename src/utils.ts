@@ -1,4 +1,7 @@
 import { inspect } from 'util';
+import * as fs from 'fs';
+import * as mkdir from 'mkdirp';
+import * as path from 'path';
 import * as _ from 'lodash';
 
 export function createAssetsFilter(excludePatterns) {
@@ -55,7 +58,7 @@ export function getModuleLoaders(module) {
  * @param {*} module
  */
 export function getModuleName(module) {
-  return module.userRequest.replace(
+  return (module.userRequest || module.request || '').replace(
     /^.*\/(@[a-z0-9][\w-.]+\/[a-z0-9][\w-.]*|[^\/]+)\?\?(@[a-z0-9][\w-.]+\/[a-z0-9][\w-.]*|[^\/]+)!/,
     '',
   );
@@ -86,6 +89,14 @@ export function getModulePathParts(path?: string) {
   return path.split('/');
 }
 
-export function generateStaticReport(profileData, options) {
+export async function generateStaticReport(profileData, options) {
+  const {
+    reportFileName = 'profile.json',
+    bundleDir = null
+  } = options;
 
+  const reportFilePath = path.resolve(bundleDir || process.cwd(), reportFileName);
+
+  mkdir.sync(path.dirname(reportFileName));
+  fs.writeFileSync(reportFilePath, JSON.stringify(profileData, null, '\t'));
 }

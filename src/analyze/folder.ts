@@ -63,17 +63,29 @@ export function getContextTime(context: ModuleProfiling) {
   return root.sum();
 }
 
-export function getFolderTime(folder: Folder, root = new TimeRange()): number {
-  const { children = {} } = folder;
-
+export function dfs(
+  tree: Folder,
+  iterator: (m: Module) => void,
+) {
+  // 深度遍历
+  const { children = {} } = tree;
   for (const key in children) {
     const child = children[key];
-    if (child instanceof Module) {
-      root.add(child.data.start, child.data.end);
+    if (child instanceof Module || (child.data && child.name)) {
+      iterator(child);
     } else {
-      getFolderTime(child, root);
+      dfs(child, iterator);
     }
   }
+}
+
+export function getFolderTime(folder: Folder): number {
+  const root = new TimeRange();
+
+  dfs(folder, m => {
+    root.add(m.data.start, m.data.end);
+  });
+
   return root.sum();
 }
 
@@ -84,7 +96,7 @@ export function statsFolder(folder: Folder): { path: string; timeConsume: number
     if (child instanceof Module) {
       return { path: key, timeConsume: child.data.end - child.data.start };
     }
-    return { path: key, timeConsume: getFolderTime(child, new TimeRange()) }
+    return { path: key, timeConsume: getFolderTime(child) }
   });
 }
 

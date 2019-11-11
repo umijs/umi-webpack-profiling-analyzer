@@ -1,10 +1,11 @@
-import { TimeRange } from '../lib/analyze/timeRange';
+import { TimeRange } from '../src/analyze/timeRange';
+import { expect } from 'chai';
 
 function shouldEquals(timeRange, arr) {
   expect(timeRange.toArray()).to.deep.equal(arr);
 };
 
-describe.only('should timeRange work', () => {
+describe('should timeRange work', () => {
   let timeRange;
   it('should init time range', () => {
     timeRange = new TimeRange();

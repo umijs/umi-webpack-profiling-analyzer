@@ -1,10 +1,8 @@
 import * as WebSocket from 'ws';
 import * as path from 'path';
-import * as fs from 'fs';
-import express from 'express';
-import mkdir from 'mkdirp';
-import http from 'http';
-import opener from 'opener';
+import * as express from 'express';
+import * as http from 'http';
+import * as opener from 'opener';
 import { AddressInfo } from 'net';
 
 import { createAssetsFilter, getRelativePath, getNodeModulesRelativePath } from './utils';
@@ -70,29 +68,29 @@ const emptyClientData = {
   plugins: {},
   loaders: {},
   summary: {},
-  raw: {},
+  // raw: {},
 };
 
 type ClientData = typeof emptyClientData;
 
-export async function generateClientData(profileData: ProfileData, options): Promise<ClientData> {
+export function generateClientData(profileData: ProfileData, options?): ClientData {
   if (!profileData) {
     return emptyClientData;
   }
 
   const miscTime = getFolderTime(profileData.misc);
   const { context } = profileData;
-  const node_modules = statsFolder(profileData.node_modules.children['node_modules'])
-  const nodeModulesTime = getFolderTime(profileData.node_modules.children['node_modules']);
+  const node_modules = statsFolder(profileData.node_modules.children['node_modules']);
 
+  const nodeModulesTime = getFolderTime(profileData.node_modules.children['node_modules']);
   const contextTime = getContextTime(context);
+
   return {
     stats: {
       context,
       node_modules
     },
     plugins: {},
-    raw: profileData,
     loaders: statsFolder(profileData.loaders),
     summary: [{
       type: 'summary',
@@ -100,19 +98,7 @@ export async function generateClientData(profileData: ProfileData, options): Pro
       contextTime,
       nodeModulesTime,
     }],
-  };
-}
-
-export async function generateStaticReport(profileData, options) {
-  const {
-    reportFileName = 'profile.json',
-    bundleDir = null
-  } = options;
-
-  const reportFilePath = path.resolve(bundleDir || process.cwd(), reportFileName);
-
-  mkdir.sync(path.dirname(reportFileName));
-  fs.writeFileSync(reportFilePath, JSON.stringify(profileData, null, '\t'));
+  } as any;
 }
 
 export async function startAnalyzerServer(profileData, options): Promise<Server> {
@@ -123,12 +109,11 @@ export async function startAnalyzerServer(profileData, options): Promise<Server>
     enableWebSocket = true
   } = options;
 
-
   if (!profileData) {
     return;
   }
 
-  const clientData = await generateClientData(profileData, options);
+  const clientData = generateClientData(profileData, options);
 
   const app = express();
 
@@ -176,7 +161,7 @@ export async function startAnalyzerServer(profileData, options): Promise<Server>
       return;
     }
 
-    const clientData = await generateClientData(profileData, options);
+    const clientData = generateClientData(profileData, options);
 
     wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {

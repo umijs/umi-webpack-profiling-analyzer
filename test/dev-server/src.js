@@ -1,1 +1,1 @@
-export const chuck = 'norris';
+module.exports = 'norris';

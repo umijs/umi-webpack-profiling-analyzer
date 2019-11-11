@@ -1,4 +1,4 @@
-const ProfileAnalyzerPlugin = require('../../lib/ProfilingAnalyzer');
+const { ProfilingAnalyzer } = require('../../lib/ProfilingAnalyzer');
 
 module.exports = {
   mode: 'development',
@@ -8,7 +8,7 @@ module.exports = {
     filename: 'bundle.js'
   },
   plugins: [
-    new ProfileAnalyzerPlugin({
+    new ProfilingAnalyzer({
       analyzerMode: 'server'
     })
   ]

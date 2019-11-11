@@ -1,4 +1,4 @@
-const {exec} = require('child_process');
+import {exec} from 'child_process';
 
 const ROOT = `${__dirname}/dev-server`;
 const WEBPACK_CONFIG_PATH = `${ROOT}/webpack.config.js`;
@@ -13,6 +13,11 @@ describe('Webpack Dev Server', function () {
       cwd: ROOT
     });
 
-    done(devServer);
+    const checkTimeout = setTimeout(() => {
+      clearTimeout(checkTimeout);
+      devServer.kill();
+      done();
+    }, 300);
+
   });
 });

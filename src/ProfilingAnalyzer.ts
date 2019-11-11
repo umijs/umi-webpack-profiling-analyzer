@@ -51,7 +51,6 @@ export class ProfilingAnalyzer {
   moduleSuccessed(module) {
     const name = getModuleName(module);
     const loaders = getModuleLoaders(module);
-
     if (this.moduleProfiling[name]) {
       this.moduleProfiling[name].end = Date.now();
       this.moduleProfiling[name].timeConsume = Date.now() - this.moduleProfiling[name].start;
@@ -74,6 +73,7 @@ export class ProfilingAnalyzer {
         await this.generateProfileData(stats);
         callback();
       } catch (e) {
+        console.error('Profiling Analyze Error', e);
         callback(e);
       }
     });
@@ -123,8 +123,9 @@ export class ProfilingAnalyzer {
    * @param {*} stats webpack stats data
    */
   async generateProfileData(stats) {
-    const {context} = this.compiler;
-    const {analyzerMode} = this.options;
+    const { context } = this.compiler;
+    const { analyzerMode } = this.options;
+
     const profileData = generateProfileData(context, stats, this.moduleProfiling, this.options);
     if (analyzerMode === 'server') {
       await this.startAnalyzerServer(profileData);
