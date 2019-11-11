@@ -1,5 +1,5 @@
 const webpackProfilingAnalyzer = require('../lib');
-const ProfilingAnalyzerPlugin = require('../lib/ProfilingAnalyzer');
+const ProfilingAnalyzerPlugin = require('../lib/ProfilingAnalyzer').ProfilingAnalyzer;
 
 describe('Profiling Analyzer Plugin', () => {
   describe('package exports correctly', () => {

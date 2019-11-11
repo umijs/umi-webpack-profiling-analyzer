@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import Viewer from './viewer';
 
 let ws;
@@ -14,18 +14,24 @@ export default function App() {
   const [profileData, setProfileData] = useState(window.profileData);
 
   function updateData(event) {
-    const data = JSON.parse(event.data);
-
-    if (data.event === 'profileDataUpdate') {
-      setProfileData(data);
+    if (typeof event.data !== 'string') {
+      return;
+    }
+    try {
+      const data = JSON.parse(event.data);
+      if (data.event === 'profileDataUpdate') {
+        setProfileData(data.data);
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 
   useLayoutEffect(() => {
     if (ws) {
-      window.addEventListener('message', updateData);
+      ws.addEventListener('message', updateData);
       return () => {
-        window.removeEventListener('message', updateData);
+        ws.removeEventListener('message', updateData);
       };
     }
   }, []);

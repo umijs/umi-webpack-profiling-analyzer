@@ -1,5 +1,11 @@
 {
   "extends": [
     "th0r-react"
-  ]
+  ],
+  "rules": {
+    "object-curly-spacing": "off",
+    "react/jsx-no-bind": 0,
+    "react/jsx-first-prop-new-line": 0,
+    "react/jsx-closing-bracket-location": 0
+  }
 }

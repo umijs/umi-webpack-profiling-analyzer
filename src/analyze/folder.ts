@@ -1,11 +1,28 @@
 
 import {getModulePathParts} from '../utils';
+import { Module } from './module';
+import { ModuleData, ModuleProfiling } from '../ProfilingAnalyzer';
+import { TimeRange } from './timeRange';
 
 export class Folder {
-  children: {};
+  children: {} = {};
 
   getChild(folderName: string): Folder {
     return this.children[folderName];
+  }
+
+  addChildModule(module: Module) {
+    const { name } = module;
+    const currentChildren = this.children[name];
+
+    if (currentChildren && currentChildren instanceof Folder) return;
+
+    if (currentChildren) {
+      currentChildren.mergeData(module.data);
+    } else {
+      // module.parent = this;
+      this.children[name] = module;
+    }
   }
 
   addChildFolder(folderName) {
@@ -13,12 +30,12 @@ export class Folder {
     return this.children[folderName];
   }
 
-  addModule(path, data) {
+  addModule(moduleData: ModuleData, path?: string) {
     const parts = getModulePathParts(path);
     if (!parts || !parts.length) {
-      return;
+      return this.addChildModule(new Module('/', moduleData));
     }
-    const [folders, filename] = [parts.slice(0, -1), parts[parts.length - 1]];
+    const [folders, fileName] = [parts.slice(0, -1), parts[parts.length - 1]];
 
     let currentFolder: Folder = this;
     folders.forEach(folderName => {
@@ -30,6 +47,44 @@ export class Folder {
 
       currentFolder = childNode;
     });
-    console.log('>> parts', folders, filename);
+    const module = new Module(fileName, moduleData);
+    currentFolder.addChildModule(module);
   }
 }
+
+export function getContextTime(context: ModuleProfiling) {
+  const root = new TimeRange();
+
+  for (const key in context) {
+    const current = context[key];
+    root.add(current.start, current.end);
+  }
+
+  return root.sum();
+}
+
+export function getFolderTime(folder: Folder, root = new TimeRange()): number {
+  const { children = {} } = folder;
+
+  for (const key in children) {
+    const child = children[key];
+    if (child instanceof Module) {
+      root.add(child.data.start, child.data.end);
+    } else {
+      getFolderTime(child, root);
+    }
+  }
+  return root.sum();
+}
+
+export function statsFolder(folder: Folder): { path: string; timeConsume: number }[] {
+  const { children = {} } = folder;
+  return Object.keys(children).map(key => {
+    const child = children[key];
+    if (child instanceof Module) {
+      return { path: key, timeConsume: child.data.end - child.data.start };
+    }
+    return { path: key, timeConsume: getFolderTime(child, new TimeRange()) }
+  });
+}
+

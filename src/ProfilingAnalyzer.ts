@@ -1,18 +1,31 @@
 import { Compiler } from 'webpack';
 
 import { startAnalyzerServer, generateProfileData, Server } from './viewer';
-import {getModuleName, getModuleLoaders, generateStaticReport} from './utils';
-
+import { getModuleName, getModuleLoaders, generateStaticReport } from './utils';
 
 const HOOKS_NS = 'ProfilingAnalyzer';
+export const MISC = Symbol('misc');
 
 export interface ProfilingAnalyzerOptions {
   analyzerMode: 'server' | 'client';
 }
 
+export interface ModuleData {
+  timeConsume?: number;
+  loaders: string[];
+  start: number,
+  end: number;
+}
+
+export type ModuleProfiling = {
+  [MISC]?: ModuleData;
+  [key: string]: ModuleData;
+};
+
+
 export class ProfilingAnalyzer {
   private options: ProfilingAnalyzerOptions;
-  private moduleProfiling: {};
+  private moduleProfiling: ModuleProfiling;
   private compiler: Compiler;
   private server: Server;
 
@@ -27,12 +40,12 @@ export class ProfilingAnalyzer {
   moduleEnter(module) {
     const name = getModuleName(module);
     const loaders = getModuleLoaders(module);
-    if (! this.moduleProfiling[name]) {
-      this.moduleProfiling[name] = {
-        loaders,
-        start: Date.now()
-      };
-    }
+
+    this.moduleProfiling[name] = {
+      loaders,
+      start: Date.now(),
+      end: null,
+    };
   }
 
   moduleSuccessed(module) {
@@ -43,14 +56,19 @@ export class ProfilingAnalyzer {
       this.moduleProfiling[name].end = Date.now();
       this.moduleProfiling[name].timeConsume = Date.now() - this.moduleProfiling[name].start;
     } else {
+      const start = module.buildTimestamp;
       this.moduleProfiling[name] = {
         loaders: getModuleLoaders(loaders),
-        timeConsume: Date.now() - module.buildTimestamp
+        start,
+        end: Date.now(),
+        timeConsume: start,
       };
     }
   }
 
   done(stats, callback) {
+    this.moduleProfiling[MISC].end = Date.now();
+    this.moduleProfiling[MISC].timeConsume = this.moduleProfiling[MISC].end - this.moduleProfiling[MISC].start;
     setImmediate(async () => {
       try {
         await this.generateProfileData(stats);
@@ -63,6 +81,13 @@ export class ProfilingAnalyzer {
 
   apply(compiler) {
     this.compiler = compiler;
+    compiler.hooks.compile.tap(`${HOOKS_NS}:start`, () => {
+      this.moduleProfiling[MISC] = {
+        loaders: [],
+        start: Date.now(),
+        end: null,
+      };
+    });
 
     compiler.hooks.compilation.tap(`${HOOKS_NS}:beforeRun`, compilation => {
       compilation.hooks.buildModule.tap(`${HOOKS_NS}:buildModule`, this.moduleEnter.bind(this));
@@ -100,9 +125,7 @@ export class ProfilingAnalyzer {
   async generateProfileData(stats) {
     const {context} = this.compiler;
     const {analyzerMode} = this.options;
-
-    const profileData = await generateProfileData(context, stats, this.moduleProfiling, this.options);
-
+    const profileData = generateProfileData(context, stats, this.moduleProfiling, this.options);
     if (analyzerMode === 'server') {
       await this.startAnalyzerServer(profileData);
     } else {

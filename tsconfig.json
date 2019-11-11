@@ -3,6 +3,11 @@
     "lib": ["dom", "es6", "es2015"],
     "target": "esnext",
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
-  }
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "sourceMap": true
+  },
+  "include": [
+    "node_modules/@types/chai/index.d.ts"
+  ]
 }

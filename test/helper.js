@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const webpack = require('webpack');
-const ProfilingAnalyzerPlugin = require('../lib/ProfilingAnalyzer');
+const ProfilingAnalyzerPlugin = require('../lib/ProfilingAnalyzer').ProfilingAnalyzer;
 
 chai.use(require('chai-subset'));
 

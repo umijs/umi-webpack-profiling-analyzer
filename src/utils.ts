@@ -1,5 +1,5 @@
-import {inspect} from 'util';
-import _ from 'lodash';
+import { inspect } from 'util';
+import * as _ from 'lodash';
 
 export function createAssetsFilter(excludePatterns) {
   const excludeFunctions = _(excludePatterns)
@@ -76,7 +76,10 @@ export function getNodeModulesRelativePath(path) {
 
 const MULTI_MODULE_REGEXP = /^multi /u;
 
-export function getModulePathParts(path) {
+export function getModulePathParts(path?: string) {
+  if (!path) {
+    return null;
+  }
   if (MULTI_MODULE_REGEXP.test(path)) {
     return [path];
   }

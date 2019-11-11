@@ -1,2 +1,2 @@
 
-export { ProfilingAnalyzer } from './ProfilingAnalyzer';
+export * from './ProfilingAnalyzer';

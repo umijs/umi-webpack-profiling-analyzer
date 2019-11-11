@@ -1,4 +1,4 @@
-const ProfilingAnalyzer = require('./lib/ProfilingAnalyzer');
+const {ProfilingAnalyzer} = require('./lib/ProfilingAnalyzer');
 
 module.exports = (opts = {}) => {
 
@@ -24,6 +24,31 @@ module.exports = (opts = {}) => {
 
     module: {
       rules: [
+        {
+          test: /\.less$/u,
+          use: [
+            {
+              loader: 'style-loader'
+            },
+            {
+              loader: 'css-loader',
+              options: {
+                modules: {
+                  mode: 'local',
+                  localIdentName: '[local]--[hash:base64:5]',
+                  hashPrefix: 'wpa-'
+                },
+                sourceMap: true
+              }
+            },
+            {
+              loader: 'less-loader',
+              options: {
+                sourceMap: true
+              }
+            }
+          ]
+        },
         {
           test: /\.jsx?$/u,
           exclude: /(node_modules|client\/vendor)/u,

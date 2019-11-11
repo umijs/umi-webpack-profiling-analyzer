@@ -2,6 +2,7 @@
   "root": true,
   "extends": "th0r",
   "rules": {
+    "object-curly-spacing": "off",
     "require-unicode-regexp": 0,
     "no-useless-escape": 0
   },
