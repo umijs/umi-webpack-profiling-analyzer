@@ -18,12 +18,16 @@ export interface Server {
   updateProfileData: (data: {}, options: {}) => any;
 }
 
-export type ProfileData = {
+export interface ProfileData {
   context: {[key: string]: ModuleData};
   loaders: Folder;
   misc: Folder;
   node_modules: Folder;
-};
+}
+
+function escapeJson(json) {
+  return JSON.stringify(json).replace(/</gu, '\\u003c');
+}
 
 export function generateProfileData(context, stats, profilingMap: ModuleProfiling, options): ProfileData {
   const {excludeAssets = ['webpack/buildin', 'webpack-dev-server']} = options;
@@ -98,7 +102,7 @@ export function generateClientData(profileData: ProfileData, options?): ClientDa
       contextTime,
       nodeModulesTime,
     }],
-  } as any;
+  };
 }
 
 export async function startAnalyzerServer(profileData, options): Promise<Server> {
@@ -178,8 +182,4 @@ export async function startAnalyzerServer(profileData, options): Promise<Server>
     http: server,
     updateProfileData
   };
-}
-
-function escapeJson(json) {
-  return JSON.stringify(json).replace(/</gu, '\\u003c');
 }

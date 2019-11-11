@@ -44,7 +44,7 @@ export function getModuleLoaders(module) {
       .map(l => l.loader || l)
       .map(l =>
         l.replace(
-          /^.*\/node_modules\/(@[a-z0-9][\w-.]+\/[a-z0-9][\w-.]*|[^\/]+).*$/,
+          /^.*\/node_modules\/(@[a-z0-9][\w-.]+\/[a-z0-9][\w-.]*|[^/]+).*$/,
           (_, m) => m
         )
       )
@@ -59,7 +59,7 @@ export function getModuleLoaders(module) {
  */
 export function getModuleName(module) {
   return (module.userRequest || module.request || '').replace(
-    /^.*\/(@[a-z0-9][\w-.]+\/[a-z0-9][\w-.]*|[^\/]+)\?\?(@[a-z0-9][\w-.]+\/[a-z0-9][\w-.]*|[^\/]+)!/,
+    /^.*\/(@[a-z0-9][\w-.]+\/[a-z0-9][\w-.]*|[^/]+)\?\?(@[a-z0-9][\w-.]+\/[a-z0-9][\w-.]*|[^/]+)!/,
     '',
   );
 }

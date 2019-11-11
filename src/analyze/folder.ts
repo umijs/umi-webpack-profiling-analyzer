@@ -5,13 +5,13 @@ import { ModuleData, ModuleProfiling } from '../ProfilingAnalyzer';
 import { TimeRange } from './timeRange';
 
 export class Folder {
-  children: {} = {};
+  public children: {} = {};
 
-  getChild(folderName: string): Folder {
+  public getChild(folderName: string): Folder {
     return this.children[folderName];
   }
 
-  addChildModule(module: Module) {
+  public addChildModule(module: Module) {
     const { name } = module;
     const currentChildren = this.children[name];
 
@@ -25,12 +25,12 @@ export class Folder {
     }
   }
 
-  addChildFolder(folderName) {
+  public addChildFolder(folderName) {
     this.children[folderName] = new Folder();
     return this.children[folderName];
   }
 
-  addModule(moduleData: ModuleData, path?: string) {
+  public addModule(moduleData: ModuleData, path?: string) {
     const parts = getModulePathParts(path);
     if (!parts || !parts.length) {
       return this.addChildModule(new Module('/', moduleData));

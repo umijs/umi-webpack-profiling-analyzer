@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["dom", "es6", "es2015"],
-    "target": "es5",
+    "target": "es6",
     "outDir": "lib",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,

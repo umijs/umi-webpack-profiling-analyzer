@@ -1,6 +1,6 @@
 
 class Node {
-  constructor(
+  public constructor(
     public start: number,
     public end: number,
     public next?: Node,
@@ -112,7 +112,7 @@ export class TimeRange {
   ) {
     let found;
     let curr;
-    for (curr = from; !!curr; curr = curr.next) {
+    for (curr = from; curr; curr = curr.next) {
       if (comparator(curr)) {
         found = curr;
         break
@@ -127,7 +127,7 @@ export class TimeRange {
   ) {
     let found;
     let curr;
-    for (curr = from; !!curr; curr = curr.next) {
+    for (curr = from; curr; curr = curr.next) {
       if (comparator(curr)) {
         found = curr;
       } else {

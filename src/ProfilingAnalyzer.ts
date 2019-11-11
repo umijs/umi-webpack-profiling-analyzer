@@ -13,15 +13,14 @@ export interface ProfilingAnalyzerOptions {
 export interface ModuleData {
   timeConsume?: number;
   loaders: string[];
-  start: number,
+  start: number;
   end: number;
 }
 
-export type ModuleProfiling = {
+export interface ModuleProfiling {
   [MISC]?: ModuleData;
   [key: string]: ModuleData;
-};
-
+}
 
 export class ProfilingAnalyzer {
   private options: ProfilingAnalyzerOptions;
@@ -29,7 +28,7 @@ export class ProfilingAnalyzer {
   private compiler: Compiler;
   private server: Server;
 
-  constructor(options = {}) {
+  public constructor(options = {}) {
     this.options = {
       analyzerMode: 'server',
       ...options
@@ -37,7 +36,7 @@ export class ProfilingAnalyzer {
     this.moduleProfiling = {};
   }
 
-  moduleEnter(module) {
+  public moduleEnter(module) {
     const name = getModuleName(module);
     const loaders = getModuleLoaders(module);
 
@@ -48,7 +47,7 @@ export class ProfilingAnalyzer {
     };
   }
 
-  moduleSuccessed(module) {
+  public moduleSuccessed(module) {
     const name = getModuleName(module);
     const loaders = getModuleLoaders(module);
     if (this.moduleProfiling[name]) {
@@ -65,7 +64,7 @@ export class ProfilingAnalyzer {
     }
   }
 
-  done(stats, callback) {
+  public done(stats, callback) {
     this.moduleProfiling[MISC].end = Date.now();
     this.moduleProfiling[MISC].timeConsume = this.moduleProfiling[MISC].end - this.moduleProfiling[MISC].start;
     setImmediate(async () => {
@@ -79,7 +78,7 @@ export class ProfilingAnalyzer {
     });
   }
 
-  apply(compiler) {
+  public apply(compiler) {
     this.compiler = compiler;
     compiler.hooks.compile.tap(`${HOOKS_NS}:start`, () => {
       this.moduleProfiling[MISC] = {
@@ -101,7 +100,7 @@ export class ProfilingAnalyzer {
    * generater static report json file
    * @param {object} profileData Profile data
    */
-  async generateStaticReport(profileData) {
+  public async generateStaticReport(profileData) {
     return generateStaticReport(profileData, this.options);
   }
 
@@ -109,7 +108,7 @@ export class ProfilingAnalyzer {
    * start local server to display stats report
    * @param {object} profileData Profile data
    */
-  async startAnalyzerServer(profileData) {
+  public async startAnalyzerServer(profileData) {
     if (this.server) {
       await this.server.updateProfileData(profileData, this.options);
     } else {
@@ -122,7 +121,7 @@ export class ProfilingAnalyzer {
    * generater stats data
    * @param {*} stats webpack stats data
    */
-  async generateProfileData(stats) {
+  public async generateProfileData(stats) {
     const { context } = this.compiler;
     const { analyzerMode } = this.options;
 
