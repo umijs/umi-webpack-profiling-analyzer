@@ -20,7 +20,7 @@ module.exports = (opts = {}) => {
     resolve: {
       extensions: ['.js', '.jsx']
     },
-    watch: true,
+    // watch: true,
 
     module: {
       rules: [
@@ -84,7 +84,7 @@ module.exports = (opts = {}) => {
       ]
     },
     plugins: [
-      new ProfilingAnalyzer({})
+      new ProfilingAnalyzer({ analyzerMode: 'none' })
     ]
   };
 };

@@ -6,7 +6,7 @@ import * as opener from 'opener';
 import { AddressInfo } from 'net';
 
 import { createAssetsFilter, getRelativePath, getNodeModulesRelativePath } from './utils';
-import { Folder, statsFolder, getFolderTime, getContextTime } from './analyze/folder';
+import { Folder, statsFolder, getFolderTime, getContextTime, FolderStats, moduleDataToFolderStats } from './analyze/folder';
 import { ModuleProfiling, MISC, ModuleData } from './ProfilingAnalyzer';
 
 const projectRoot = path.resolve(__dirname, '..');
@@ -66,16 +66,24 @@ export function generateProfileData(context, stats, profilingMap: ModuleProfilin
   return groupedProfilingMap;
 }
 
+export interface ClientData {
+  stats: {
+    context?: FolderStats[];
+    node_modules?: FolderStats[];
+  };
+  plugins: {};
+  loaders: FolderStats[];
+  miscTime: number;
+  summary: any[];
+}
 
-const emptyClientData = {
+const emptyClientData: ClientData = {
   stats: {},
   plugins: {},
-  loaders: {},
-  summary: {},
-  // raw: {},
+  loaders: [],
+  summary: [],
+  miscTime: 0,
 };
-
-type ClientData = typeof emptyClientData;
 
 export function generateClientData(profileData: ProfileData, options?): ClientData {
   if (!profileData) {
@@ -84,16 +92,17 @@ export function generateClientData(profileData: ProfileData, options?): ClientDa
 
   const miscTime = getFolderTime(profileData.misc);
   const { context } = profileData;
-  const node_modules = statsFolder(profileData.node_modules.children['node_modules']);
+  const node_modules = statsFolder(profileData.node_modules.children['node_modules'] as Folder);
 
-  const nodeModulesTime = getFolderTime(profileData.node_modules.children['node_modules']);
+  const nodeModulesTime = getFolderTime(profileData.node_modules.children['node_modules'] as Folder);
   const contextTime = getContextTime(context);
 
   return {
     stats: {
-      context,
+      context: moduleDataToFolderStats(context),
       node_modules
     },
+    miscTime,
     plugins: {},
     loaders: statsFolder(profileData.loaders),
     summary: [{

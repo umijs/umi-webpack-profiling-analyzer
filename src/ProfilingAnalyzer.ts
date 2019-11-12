@@ -1,15 +1,18 @@
 import { Compiler } from 'webpack';
 
-import { startAnalyzerServer, generateProfileData, Server } from './viewer';
-import { getModuleName, getModuleLoaders, generateStaticReport } from './utils';
+import { startAnalyzerServer, generateProfileData, Server, generateClientData } from './viewer';
+import { getModuleName, getModuleLoaders, generateStaticReport, humanizeDuration } from './utils';
+import { Logger, bg, fg, ansiChart } from './logger';
 
 const HOOKS_NS = 'ProfilingAnalyzer';
 export const MISC = Symbol('misc');
 
 export interface ProfilingAnalyzerOptions {
-  analyzerMode: 'server' | 'client';
+  analyzerMode: 'server' | 'static';
+  logger: Logger;
 }
 
+import * as _ from 'lodash';
 export interface ModuleData {
   timeConsume?: number;
   loaders: string[];
@@ -29,10 +32,10 @@ export class ProfilingAnalyzer {
   private server: Server;
 
   public constructor(options = {}) {
-    this.options = {
+    this.options = _.merge({
       analyzerMode: 'server',
-      ...options
-    };
+      logger: new Logger(),
+    }, options);
     this.moduleProfiling = {};
   }
 
@@ -104,6 +107,24 @@ export class ProfilingAnalyzer {
     return generateStaticReport(profileData, this.options);
   }
 
+  public generateConsoleOutput(profileData) {
+    const clientData = generateClientData(profileData, this.options);
+    const { miscTime, loaders, stats } = clientData;
+
+    console.log('>> clientData', loaders);
+
+    return this.options.logger.log([
+      bg('Webpack Build Time Analyze'),
+      `General output time took: ${bg(fg(humanizeDuration(miscTime), miscTime))}`,
+      `Loaders:`,
+      ansiChart(loaders, { row: 'path', value: 'timeConsume' }),
+      'Top 5 context modules:',
+      ansiChart(stats.context, { row: 'path', value: 'timeConsume' }, { limit: 5 }),
+      'Top 5 node_modules modules:',
+      ansiChart(stats.node_modules, { row: 'path', value: 'timeConsume' }, { limit: 5 })
+    ]);
+  }
+
   /**
    * start local server to display stats report
    * @param {object} profileData Profile data
@@ -114,7 +135,6 @@ export class ProfilingAnalyzer {
     } else {
       this.server = await startAnalyzerServer(profileData, this.options);
     }
-
   }
 
   /**
@@ -124,12 +144,16 @@ export class ProfilingAnalyzer {
   public async generateProfileData(stats) {
     const { context } = this.compiler;
     const { analyzerMode } = this.options;
-
     const profileData = generateProfileData(context, stats, this.moduleProfiling, this.options);
-    if (analyzerMode === 'server') {
-      await this.startAnalyzerServer(profileData);
-    } else {
-      await this.generateStaticReport(profileData);
+    switch (analyzerMode) {
+      case 'server':
+        await this.startAnalyzerServer(profileData);
+        break;
+      case 'static':
+        await this.generateStaticReport(profileData);
+        break;
+      default:
+        this.generateConsoleOutput(profileData);
     }
   }
 }

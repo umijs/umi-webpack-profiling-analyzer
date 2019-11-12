@@ -95,6 +95,13 @@ export class TimeRange {
     return cumulative;
   }
 
+  public merge(otherTimeRange: TimeRange) {
+    return otherTimeRange.reduce((prev, curr) => {
+      prev.add(curr.start, curr.end);
+      return prev;
+    }, this);
+  }
+
   public sum() {
     return this.reduce((sum, curr) => sum + (curr.end - curr.start), 0);
   }

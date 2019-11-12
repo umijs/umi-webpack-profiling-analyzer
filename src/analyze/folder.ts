@@ -89,7 +89,12 @@ export function getFolderTime(folder: Folder): number {
   return root.sum();
 }
 
-export function statsFolder(folder: Folder): { path: string; timeConsume: number }[] {
+export interface FolderStats {
+  path: string;
+  timeConsume: number;
+}
+
+export function statsFolder(folder: Folder): FolderStats[] {
   const { children = {} } = folder;
   return Object.keys(children).map(key => {
     const child = children[key];
@@ -100,3 +105,9 @@ export function statsFolder(folder: Folder): { path: string; timeConsume: number
   });
 }
 
+export function moduleDataToFolderStats(moduleData: { [key: string]: ModuleData }): FolderStats[] {
+  return Object.keys(moduleData).map(path => ({
+    path,
+    timeConsume: moduleData[path].timeConsume,
+  }));
+}

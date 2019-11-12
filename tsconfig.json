@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
     "lib": ["dom", "es6", "es2015"],
-    "target": "es6",
+    "target": "es5",
     "outDir": "lib",
+    "rootDir": "./src",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "sourceMap":true
-  }
+  },
+  "exclude": [
+    "lib", "test"
+  ]
 }
