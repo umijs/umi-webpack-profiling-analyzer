@@ -7,12 +7,6 @@ import { ProfilingAnalyzer } from '../src/ProfilingAnalyzer';
 
 use(require('chai-subset'));
 
-
-(global as any).expect = expect;
-(global as any).webpackCompile = webpackCompile;
-(global as any).makeWebpackConfig = makeWebpackConfig;
-(global as any).expectFile = expectFile;
-
 function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -114,3 +108,8 @@ export function expectFile(url) {
   const exists = fs.existsSync(filePath);
   expect(exists);
 }
+
+(global as any).expect = expect;
+(global as any).webpackCompile = webpackCompile;
+(global as any).makeWebpackConfig = makeWebpackConfig;
+(global as any).expectFile = expectFile;

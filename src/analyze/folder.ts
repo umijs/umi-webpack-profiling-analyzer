@@ -18,7 +18,7 @@ export class Folder {
     if (currentChildren && currentChildren instanceof Folder) return;
 
     if (currentChildren) {
-      currentChildren.mergeData(module.data);
+      currentChildren.merge(module);
     } else {
       // module.parent = this;
       this.children[name] = module;
@@ -83,7 +83,9 @@ export function getFolderTime(folder: Folder): number {
   const root = new TimeRange();
 
   dfs(folder, m => {
-    root.add(m.data.start, m.data.end);
+    m.ranges.forEach(([start, end]) => {
+      root.add(start, end);
+    });
   });
 
   return root.sum();
@@ -99,7 +101,7 @@ export function statsFolder(folder: Folder): FolderStats[] {
   return Object.keys(children).map(key => {
     const child = children[key];
     if (child instanceof Module) {
-      return { path: key, timeConsume: child.data.end - child.data.start };
+      return { path: key, timeConsume: child.sum() };
     }
     return { path: key, timeConsume: getFolderTime(child) }
   });

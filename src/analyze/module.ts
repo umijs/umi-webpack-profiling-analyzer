@@ -1,13 +1,31 @@
 import { ModuleData } from '../ProfilingAnalyzer';
+import { TimeRange } from './timeRange';
 
 export class Module {
   public parent;
-  public constructor(public name: string, public data: ModuleData) {}
+  public name: string;
+  public ranges: number[][];
+
+  public constructor(name: string, data: ModuleData) {
+    this.name = name;
+    this.ranges = [];
+    this.mergeData(data)
+  }
+
+  public merge(other: Module) {
+    this.ranges = this.ranges.concat(other.ranges);
+  }
 
   public mergeData(data: ModuleData) {
-    console.log('>> call merge', this.data, data);
-    this.data.start = data.start;
-    this.data.end = data.end;
-    this.data.timeConsume = this.data.end - this.data.start;
+    this.ranges.push([data.start, data.end]);
   }
+
+  public sum() {
+    const timeRange = new TimeRange();
+    this.ranges.forEach(([start, end ]) => {
+      timeRange.add(start, end);
+    });
+    return timeRange.sum();
+  }
+
 }

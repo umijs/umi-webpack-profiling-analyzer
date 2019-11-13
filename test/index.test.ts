@@ -1,3 +1,4 @@
+import { describe, it } from 'mocha';
 import * as webpackProfilingAnalyzer from '../src';
 import { ProfilingAnalyzer } from '../src/ProfilingAnalyzer';
 import { expect } from 'chai';

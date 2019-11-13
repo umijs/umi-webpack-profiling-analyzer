@@ -20,7 +20,7 @@ module.exports = (opts = {}) => {
     resolve: {
       extensions: ['.js', '.jsx']
     },
-    // watch: true,
+    watch: true,
 
     module: {
       rules: [

@@ -1,5 +1,6 @@
 import { expect } from 'chai';
-const data = require('./stats/test.json');
+import { describe, it } from 'mocha';
+import data from './stats/test.json';
 import { generateClientData } from '../src/viewer';
 
 describe('should viewer work', () => {

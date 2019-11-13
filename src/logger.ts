@@ -68,6 +68,5 @@ export function ansiChart<T extends object>(
       '    ',
       `[${fg(humanizeDuration(v), v)}] - ${label}`
     ].join('');
-  })
-  .join('\n');
+  }).join('\n');
 }

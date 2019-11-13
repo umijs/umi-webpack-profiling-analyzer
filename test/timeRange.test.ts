@@ -1,9 +1,10 @@
-import { TimeRange } from '../src/analyze/timeRange';
+import { describe, it } from 'mocha';
 import { expect } from 'chai';
+import { TimeRange } from '../src/analyze/timeRange';
 
 function shouldEquals(timeRange, arr) {
   expect(timeRange.toArray()).to.deep.equal(arr);
-};
+}
 
 describe('should timeRange work', () => {
   let timeRange;

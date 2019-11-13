@@ -111,8 +111,6 @@ export class ProfilingAnalyzer {
     const clientData = generateClientData(profileData, this.options);
     const { miscTime, loaders, stats } = clientData;
 
-    console.log('>> clientData', loaders);
-
     return this.options.logger.log([
       bg('Webpack Build Time Analyze'),
       `General output time took: ${bg(fg(humanizeDuration(miscTime), miscTime))}`,

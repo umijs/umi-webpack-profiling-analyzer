@@ -67,6 +67,7 @@ export function generateProfileData(context, stats, profilingMap: ModuleProfilin
 }
 
 export interface ClientData {
+  raw?: {};
   stats: {
     context?: FolderStats[];
     node_modules?: FolderStats[];
@@ -102,6 +103,7 @@ export function generateClientData(profileData: ProfileData, options?): ClientDa
       context: moduleDataToFolderStats(context),
       node_modules
     },
+    raw: profileData,
     miscTime,
     plugins: {},
     loaders: statsFolder(profileData.loaders),

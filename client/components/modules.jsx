@@ -14,30 +14,23 @@ const mappings = {
   nodeModulesTime: 'Modules in node_modules'
 };
 
+function procedureData(data) {
+  return data.map(({ path, timeConsume }) => ({
+    key: path,
+    value: timeConsume
+  }))
+    .sort((a, b) => a.value - b.value)
+    .slice(-10);
+}
+
 export default function Modules({ data }) {
   const tooltip = createTooltipWidthMapping(mappings);
   const childTooltip = createTooltipWidthMapping({}, 'indexValue');
 
   const { context, node_modules: nodeModules } = data.stats;
-  const contextData = React.useMemo(() =>
-    Object.keys(context)
-      .map(key => ({
-        key,
-        value: context[key].end - context[key].start
-      }))
-      .sort((a, b) => a.value - b.value)
-      .slice(0, 10)
-  , [context]);
 
-  const nodeModulesData = React.useMemo(() =>
-    nodeModules
-      .map(({ path, timeConsume }) => ({
-        key: path,
-        value: timeConsume
-      }))
-      .sort((a, b) => a.value - b.value)
-      .slice(-10)
-  , [nodeModules]);
+  const contextData = React.useMemo(() => procedureData(context), [context]);
+  const nodeModulesData = React.useMemo(() => procedureData(nodeModules), [ nodeModules ]);
 
   const getColor = createColorScale('indexValue');
 

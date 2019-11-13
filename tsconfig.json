@@ -5,6 +5,7 @@
     "outDir": "lib",
     "rootDir": "./src",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "sourceMap":true
