@@ -99,7 +99,7 @@ export class ProfilingAnalyzer {
   }
 
   public generateConsoleOutput(profileData) {
-    const clientData = generateClientData(profileData, this.options);
+    const clientData = generateClientData(profileData);
     const { miscTime, loaders, stats } = clientData;
 
     return this.options.logger.log([

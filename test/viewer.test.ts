@@ -8,7 +8,7 @@ const data = require('./stats/test.json');
 describe('should viewer work', () => {
 
   it('should generateClientData', () => {
-    const result = generateClientData(data as any);
+    const result = generateClientData(data);
     expect(result);
   });
 

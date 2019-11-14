@@ -15,7 +15,7 @@ const title = `${process.env.npm_package_name || 'Webpack Profiling Analyzer'} [
 export interface Server {
   ws: WebSocket.Server;
   server: http.Server;
-  updateProfileData: (data: {}, options: {}) => any;
+  updateProfileData: (data: {}, options: {}) => void;
 }
 
 export interface ProfileData {
@@ -75,7 +75,7 @@ export interface ClientData {
   plugins: {};
   loaders: FolderStats[];
   miscTime: number;
-  summary: any[];
+  summary: unknown[];
 }
 
 const emptyClientData: ClientData = {
@@ -86,7 +86,7 @@ const emptyClientData: ClientData = {
   miscTime: 0,
 };
 
-export function generateClientData(profileData: ProfileData, options?): ClientData {
+export function generateClientData(profileData: ProfileData): ClientData {
   if (!profileData) {
     return emptyClientData;
   }
@@ -128,7 +128,7 @@ export async function startAnalyzerServer(profileData, options): Promise<Server>
     return;
   }
 
-  const clientData = generateClientData(profileData, options);
+  const clientData = generateClientData(profileData);
 
   const app = express();
 
@@ -171,12 +171,12 @@ export async function startAnalyzerServer(profileData, options): Promise<Server>
     });
   });
 
-  const updateProfileData = async (profileData, options) => {
+  const updateProfileData = async profileData => {
     if (!profileData) {
       return;
     }
 
-    const clientData = generateClientData(profileData, options);
+    const clientData = generateClientData(profileData);
 
     wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
