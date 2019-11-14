@@ -1,4 +1,4 @@
-const {ProfilingAnalyzer} = require('./lib/ProfilingAnalyzer');
+import {ProfilingAnalyzer} from './lib/ProfilingAnalyzer';
 
 module.exports = (opts = {}) => {
 
@@ -84,7 +84,7 @@ module.exports = (opts = {}) => {
       ]
     },
     plugins: [
-      new ProfilingAnalyzer({ analyzerMode: 'none' })
+      new ProfilingAnalyzer()
     ]
   };
 };
