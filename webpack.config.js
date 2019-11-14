@@ -1,4 +1,4 @@
-import {ProfilingAnalyzer} from './lib/ProfilingAnalyzer';
+const {ProfilingAnalyzer} = require('./lib/ProfilingAnalyzer');
 
 module.exports = (opts = {}) => {
 

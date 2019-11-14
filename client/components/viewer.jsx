@@ -6,7 +6,6 @@ import Loaders from './loaders';
 import styles from './style/viewer.less';
 
 export default function Viewer({ data }) {
-  console.log('>> data', data);
   return (
     <div className={styles.viewer}>
       <h2>
