@@ -8,5 +8,6 @@
   "mocha.files.glob": "test/**/*.test.ts",
   "mocha.requires": [
     "ts-node/register"
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

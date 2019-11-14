@@ -17,15 +17,27 @@ describe('Profiling Analyzer Plugin', () => {
     });
   });
 
-  describe('webpack plugin', () => {
-    it('webpack should use ProfilingAnalyzer as plugin', async () => {
+  describe('webpack should use ProfilingAnalyzer as plugin', () => {
+
+    it('static report', async () => {
       const config = makeWebpackConfig({
-        multipleChunks: true,
-        analyzerMode: 'static'
+        profilingAnalyzerOptions: {
+          analyzerMode: 'static'
+        }
       });
 
       await webpackCompile(config);
       expectFile('output/profile.json');
+    });
+
+    it('report', async () => {
+      const config = makeWebpackConfig({
+        profilingAnalyzerOptions: {
+          analyzerMode: 'none'
+        }
+      });
+      await webpackCompile(config);
+      expect(true);
     });
   });
 });

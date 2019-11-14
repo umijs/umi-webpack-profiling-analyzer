@@ -14,7 +14,7 @@ const title = `${process.env.npm_package_name || 'Webpack Profiling Analyzer'} [
 
 export interface Server {
   ws: WebSocket.Server;
-  http: http.Server;
+  server: http.Server;
   updateProfileData: (data: {}, options: {}) => any;
 }
 
@@ -190,7 +190,7 @@ export async function startAnalyzerServer(profileData, options): Promise<Server>
 
   return {
     ws: wss,
-    http: server,
+    server,
     updateProfileData
   };
 }

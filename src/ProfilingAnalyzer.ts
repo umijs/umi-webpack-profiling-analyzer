@@ -52,18 +52,9 @@ export class ProfilingAnalyzer {
 
   public moduleSuccessed(module) {
     const name = getModuleName(module);
-    const loaders = getModuleLoaders(module);
     if (this.moduleProfiling[name]) {
       this.moduleProfiling[name].end = Date.now();
       this.moduleProfiling[name].timeConsume = Date.now() - this.moduleProfiling[name].start;
-    } else {
-      const start = module.buildTimestamp;
-      this.moduleProfiling[name] = {
-        loaders: getModuleLoaders(loaders),
-        start,
-        end: Date.now(),
-        timeConsume: start,
-      };
     }
   }
 
