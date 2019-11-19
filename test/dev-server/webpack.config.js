@@ -1,7 +1,5 @@
 const { ProfilingAnalyzer } = require('../../lib/ProfilingAnalyzer');
 
-console.log('>>> ProfilingAnalyzer', ProfilingAnalyzer);
-
 module.exports = {
   mode: 'development',
   entry: `${__dirname}/src.js`,

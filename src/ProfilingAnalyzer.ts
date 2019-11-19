@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { Compiler } from 'webpack';
 
 import { startAnalyzerServer, generateProfileData, Server, generateClientData } from './viewer';
@@ -10,9 +11,10 @@ export const MISC = Symbol('misc');
 export interface ProfilingAnalyzerOptions {
   analyzerMode: 'server' | 'static';
   logger: Logger;
+  reportFileName?: string;
+  dumpProfileData?: boolean;
 }
 
-import * as _ from 'lodash';
 export interface ModuleData {
   timeConsume?: number;
   loaders: string[];
@@ -94,12 +96,13 @@ export class ProfilingAnalyzer {
    * generater static report json file
    * @param {object} profileData Profile data
    */
-  public async generateStaticReport(profileData) {
-    return generateStaticReport(profileData, this.options);
+  public async generateStaticReport(profileData, options: Partial<ProfilingAnalyzerOptions> = this.options) {
+    return generateStaticReport(profileData, options);
   }
 
-  public generateConsoleOutput(profileData) {
-    const clientData = generateClientData(profileData);
+
+  public generateConsoleOutput(profileData, env) {
+    const clientData = generateClientData(profileData, env);
     const { miscTime, loaders, stats } = clientData;
 
     return this.options.logger.log([
@@ -118,11 +121,11 @@ export class ProfilingAnalyzer {
    * start local server to display stats report
    * @param {object} profileData Profile data
    */
-  public async startAnalyzerServer(profileData) {
+  public async startAnalyzerServer(profileData, env) {
     if (this.server) {
-      await this.server.updateProfileData(profileData, this.options);
+      await this.server.updateProfileData(profileData, this.options, env);
     } else {
-      this.server = await startAnalyzerServer(profileData, this.options);
+      this.server = await startAnalyzerServer(profileData, this.options, env);
     }
   }
 
@@ -134,15 +137,23 @@ export class ProfilingAnalyzer {
     const { context } = this.compiler;
     const { analyzerMode } = this.options;
     const profileData = generateProfileData(context, stats, this.moduleProfiling, this.options);
+    const env = {
+      context: this.compiler.context,
+    };
+
+    if (this.options.dumpProfileData) {
+      await this.generateStaticReport(this.moduleProfiling, { reportFileName: 'dump.json' });
+    }
+
     switch (analyzerMode) {
       case 'server':
-        await this.startAnalyzerServer(profileData);
+        await this.startAnalyzerServer(profileData, env);
         break;
       case 'static':
         await this.generateStaticReport(profileData);
         break;
       default:
-        this.generateConsoleOutput(profileData);
+        this.generateConsoleOutput(profileData, env);
     }
   }
 }

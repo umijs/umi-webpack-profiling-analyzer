@@ -14,13 +14,13 @@ const mappings = {
   nodeModulesTime: 'Modules in node_modules'
 };
 
-function procedureData(data) {
+function procedureData(data, limit = 10) {
   return data.map(({ path, timeConsume }) => ({
     key: path,
     value: timeConsume
   }))
     .sort((a, b) => a.value - b.value)
-    .slice(-10);
+    .slice(-1 * limit);
 }
 
 export default function Modules({ data }) {
@@ -29,7 +29,7 @@ export default function Modules({ data }) {
 
   const { context, node_modules: nodeModules } = data.stats;
 
-  const contextData = React.useMemo(() => procedureData(context), [context]);
+  const contextData = React.useMemo(() => procedureData(context, 20), [context]);
   const nodeModulesData = React.useMemo(() => procedureData(nodeModules), [ nodeModules ]);
 
   const getColor = createColorScale('indexValue');

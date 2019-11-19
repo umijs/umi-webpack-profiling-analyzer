@@ -1,10 +1,12 @@
 import React from 'react';
 import { ResponsiveBar } from '@nivo/bar';
 import { defs } from './defines';
+import { fontStyles } from './colors';
 
 export default function BarChart({ data, keys, tooltip, fill, ...extraProps }) {
   return (
     <ResponsiveBar
+      layers={['grid', 'axes', 'bars', 'markers', 'legends', 'annotations']}
       defs={defs}
       data={data}
       keys={keys}
@@ -16,7 +18,8 @@ export default function BarChart({ data, keys, tooltip, fill, ...extraProps }) {
       tooltip={tooltip}
       fill={fill}
       axisLeft={null}
-      labelTextColor="inherit:darker(1.2)"
+      labelTextColor="inherit:lighter(1.2)"
+      style={fontStyles}
       motionStiffness={90}
       motionDamping={15}
       animate

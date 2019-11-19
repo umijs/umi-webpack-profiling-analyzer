@@ -3,6 +3,7 @@ import compose from 'recompose/compose';
 import withPropsOnChange from 'recompose/withPropsOnChange';
 import pure from 'recompose/pure';
 import { BasicTooltip } from '@nivo/tooltip';
+import { fontStyles } from './colors';
 
 function CustomBarComponent({
   x, y, width, height, color, label, data, borderRadius,
@@ -15,6 +16,7 @@ function CustomBarComponent({
   onMouseEnter,
   onMouseLeave
 }) {
+
   const handleTooltip = e => showTooltip(tooltip, e);
   const handleMouseEnter = e => {
     onMouseEnter(data, e);
@@ -48,8 +50,9 @@ function CustomBarComponent({
           alignmentBaseline="central"
           style={{
             ...theme.labels.text,
+            ...fontStyles,
             pointerEvents: 'none',
-            fill: labelColor
+            fill: labelColor,
           }}
         >
           {label}

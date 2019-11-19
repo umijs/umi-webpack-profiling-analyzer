@@ -12,10 +12,14 @@ import { ModuleProfiling, MISC, ModuleData } from './ProfilingAnalyzer';
 const projectRoot = path.resolve(__dirname, '..');
 const title = `${process.env.npm_package_name || 'Webpack Profiling Analyzer'} [${Date.now()}]`;
 
+export interface Env {
+  context: string;
+}
+
 export interface Server {
   ws: WebSocket.Server;
   server: http.Server;
-  updateProfileData: (data: {}, options: {}) => void;
+  updateProfileData: (data: {}, options: {}, env: Env) => void;
 }
 
 export interface ProfileData {
@@ -67,6 +71,7 @@ export function generateProfileData(context, stats, profilingMap: ModuleProfilin
 }
 
 export interface ClientData {
+  env: Env;
   raw?: {};
   stats: {
     context?: FolderStats[];
@@ -79,6 +84,9 @@ export interface ClientData {
 }
 
 const emptyClientData: ClientData = {
+  env: {
+    context: '',
+  },
   stats: {},
   plugins: {},
   loaders: [],
@@ -86,7 +94,7 @@ const emptyClientData: ClientData = {
   miscTime: 0,
 };
 
-export function generateClientData(profileData: ProfileData): ClientData {
+export function generateClientData(profileData: ProfileData, env: Env): ClientData {
   if (!profileData) {
     return emptyClientData;
   }
@@ -99,11 +107,12 @@ export function generateClientData(profileData: ProfileData): ClientData {
   const contextTime = getContextTime(context);
 
   return {
+    env,
     stats: {
       context: moduleDataToFolderStats(context),
       node_modules
     },
-    raw: profileData,
+    // raw: profileData,
     miscTime,
     plugins: {},
     loaders: statsFolder(profileData.loaders),
@@ -116,7 +125,7 @@ export function generateClientData(profileData: ProfileData): ClientData {
   };
 }
 
-export async function startAnalyzerServer(profileData, options): Promise<Server> {
+export async function startAnalyzerServer(profileData, options, env): Promise<Server> {
   const {
     port = 8888,
     host = '127.0.0.1',
@@ -128,7 +137,7 @@ export async function startAnalyzerServer(profileData, options): Promise<Server>
     return;
   }
 
-  const clientData = generateClientData(profileData);
+  const clientData = generateClientData(profileData, env);
 
   const app = express();
 
@@ -176,7 +185,7 @@ export async function startAnalyzerServer(profileData, options): Promise<Server>
       return;
     }
 
-    const clientData = generateClientData(profileData);
+    const clientData = generateClientData(profileData, env);
 
     wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
