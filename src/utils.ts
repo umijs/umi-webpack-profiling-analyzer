@@ -126,3 +126,7 @@ export function humanizeDuration(value: number) {
 
   return tokens.join(' ');
 }
+
+export function getLoadersIdentify(loaders: string[]) {
+  return loaders.join(',\t');
+}

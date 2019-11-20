@@ -1,4 +1,6 @@
 import * as _ from 'lodash';
+import * as path from 'path';
+import * as fs from 'fs';
 import { Compiler } from 'webpack';
 
 import { startAnalyzerServer, generateProfileData, Server, generateClientData } from './viewer';
@@ -7,6 +9,7 @@ import { Logger, bg, fg, ansiChart } from './logger';
 
 const HOOKS_NS = 'ProfilingAnalyzer';
 export const MISC = Symbol('misc');
+export const NS = path.dirname(fs.realpathSync(__filename));
 
 export interface ProfilingAnalyzerOptions {
   analyzerMode: 'server' | 'static';
@@ -60,12 +63,12 @@ export class ProfilingAnalyzer {
     }
   }
 
-  public done(stats, callback) {
+  public done(_, callback) {
     this.moduleProfiling[MISC].end = Date.now();
     this.moduleProfiling[MISC].timeConsume = this.moduleProfiling[MISC].end - this.moduleProfiling[MISC].start;
     setImmediate(async () => {
       try {
-        await this.generateProfileData(stats);
+        await this.generateProfileData();
         callback();
       } catch (e) {
         console.error('Profiling Analyze Error', e);
@@ -100,7 +103,6 @@ export class ProfilingAnalyzer {
     return generateStaticReport(profileData, options);
   }
 
-
   public generateConsoleOutput(profileData, env) {
     const clientData = generateClientData(profileData, env);
     const { miscTime, loaders, stats } = clientData;
@@ -133,10 +135,10 @@ export class ProfilingAnalyzer {
    * generater stats data
    * @param {*} stats webpack stats data
    */
-  public async generateProfileData(stats) {
+  public async generateProfileData() {
     const { context } = this.compiler;
     const { analyzerMode } = this.options;
-    const profileData = generateProfileData(context, stats, this.moduleProfiling, this.options);
+    const profileData = generateProfileData(context, this.moduleProfiling, this.options);
     const env = {
       context: this.compiler.context,
     };

@@ -20,6 +20,9 @@ module.exports = (opts = {}) => {
     resolve: {
       extensions: ['.js', '.jsx']
     },
+    // externals: {
+    //   'react-dom': 'ReactDOM'
+    // },
     watch: true,
 
     module: {
@@ -96,7 +99,7 @@ module.exports = (opts = {}) => {
       ]
     },
     plugins: [
-      new ProfilingAnalyzer({ dumpProfileData: true })
+      new ProfilingAnalyzer()
     ]
   };
 };

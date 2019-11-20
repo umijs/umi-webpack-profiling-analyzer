@@ -110,6 +110,7 @@ export function statsFolder(folder: Folder): FolderStats[] {
 export function moduleDataToFolderStats(moduleData: { [key: string]: ModuleData }): FolderStats[] {
   return Object.keys(moduleData).map(path => ({
     path,
+    loaders: moduleData[path].loaders,
     timeConsume: moduleData[path].timeConsume,
   }));
 }

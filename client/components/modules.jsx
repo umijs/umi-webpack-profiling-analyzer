@@ -15,18 +15,18 @@ const mappings = {
 };
 
 function procedureData(data, limit = 10) {
-  return data.map(({ path, timeConsume }) => ({
+  return data.map(({ loaders, path, timeConsume }) => ({
     key: path,
+    id: loaders ? loaders.join(',\t') : path,
     value: timeConsume
   }))
     .sort((a, b) => a.value - b.value)
     .slice(-1 * limit);
 }
 
-export default function Modules({ data }) {
+export default function Modules({ data, fill }) {
   const tooltip = createTooltipWidthMapping(mappings);
   const childTooltip = createTooltipWidthMapping({}, 'indexValue');
-
   const { context, node_modules: nodeModules } = data.stats;
 
   const contextData = React.useMemo(() => procedureData(context, 20), [context]);
@@ -80,10 +80,11 @@ export default function Modules({ data }) {
               data={contextData}
               keys={['value']}
               indexBy="key"
+              colorBy="id"
               groupMode="grouped"
               colors={getColor}
               tooltip={childTooltip}
-              fill={fillTop3(contextData)}
+              fill={fill}
               axisTop={{
                 enable: true,
                 tickValues: 4,

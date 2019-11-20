@@ -4,9 +4,10 @@ import { defs } from './charts/defines';
 import { humanizeDuration } from './utils/formatters';
 import { createTooltipWidthMapping } from './charts/tooltip';
 
-export default function Loaders({ data }) {
+export default function Loaders({ data, fill }) {
   const sliceLabel = React.useCallback(d => humanizeDuration(d.value), []);
   const tooltip = createTooltipWidthMapping({});
+
   return (
     <>
       <h3> Loaders </h3>
@@ -25,14 +26,7 @@ export default function Loaders({ data }) {
           colors={{scheme: 'nivo'}}
           defs={defs}
           tooltip={tooltip}
-          fill={[
-            {
-              match: {
-                id: 'modules with no loaders'
-              },
-              id: 'lines'
-            }
-          ]}
+          fill={fill}
           legends={[
             {
               anchor: 'right',

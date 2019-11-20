@@ -5,7 +5,7 @@ import * as http from 'http';
 import * as opener from 'opener';
 import { AddressInfo } from 'net';
 
-import { createAssetsFilter, getRelativePath, getNodeModulesRelativePath } from './utils';
+import { createAssetsFilter, getRelativePath, getNodeModulesRelativePath, getLoadersIdentify } from './utils';
 import { Folder, statsFolder, getFolderTime, getContextTime, FolderStats, moduleDataToFolderStats } from './analyze/folder';
 import { ModuleProfiling, MISC, ModuleData } from './ProfilingAnalyzer';
 
@@ -33,7 +33,7 @@ function escapeJson(json) {
   return JSON.stringify(json).replace(/</gu, '\\u003c');
 }
 
-export function generateProfileData(context, stats, profilingMap: ModuleProfiling, options): ProfileData {
+export function generateProfileData(context, profilingMap: ModuleProfiling, options): ProfileData {
   const {excludeAssets = ['webpack/buildin', 'webpack-dev-server']} = options;
   const nodeModules = path.join(context, 'node_modules');
 
@@ -54,9 +54,8 @@ export function generateProfileData(context, stats, profilingMap: ModuleProfilin
       const module = profilingMap[key];
 
       if (module.loaders && module.loaders.length) {
-        module.loaders.forEach(loader => {
-          groupedProfilingMap.loaders.addModule(module, loader);
-        });
+        const loadersIdentify = getLoadersIdentify(module.loaders);
+        groupedProfilingMap.loaders.addModule(module, loadersIdentify)
       }
 
       if (key.includes(context) && !key.includes(nodeModules)) {
