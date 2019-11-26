@@ -27,10 +27,10 @@ function procedureData(data, limit = 10) {
 export default function Modules({ data, fill }) {
   const tooltip = createTooltipWidthMapping(mappings);
   const childTooltip = createTooltipWidthMapping({}, 'indexValue');
-  const { context, node_modules: nodeModules } = data.stats;
+  const { context, node_modules: nodeModules } = data.raw;
 
   const contextData = React.useMemo(() => procedureData(context, 20), [context]);
-  const nodeModulesData = React.useMemo(() => procedureData(nodeModules), [ nodeModules ]);
+  const nodeModulesData = React.useMemo(() => procedureData(nodeModules, 15), [ nodeModules ]);
 
   const getColor = createColorScale('indexValue');
 
@@ -73,8 +73,11 @@ export default function Modules({ data, fill }) {
 
       <div className={styles.row}>
         <div className={styles.col}>
-          <h4>In context</h4>
-          <div style={{ height: 300, width: '80%' }}>
+          <h4>
+            In context
+            <em>{context.length} files</em>
+          </h4>
+          <div style={{ height: Math.max(300, contextData.length * 22), width: '80%' }}>
             <BarChart
               margin={{left: 16, top: 24, right: 16}}
               data={contextData}
@@ -103,7 +106,10 @@ export default function Modules({ data, fill }) {
         </div>
 
         <div className={styles.col}>
-          <h4>In node_modules</h4>
+          <h4>
+            In node_modules
+            <em>{nodeModules.length} modules </em>
+          </h4>
           <div style={{ height: 300, width: '80%' }}>
             <BarChart
               margin={{left: 16, top: 25, right: 16}}

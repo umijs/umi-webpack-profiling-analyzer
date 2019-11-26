@@ -18,7 +18,7 @@ export default function BarChart({ data, keys, tooltip, fill, ...extraProps }) {
       tooltip={tooltip}
       fill={fill}
       axisLeft={null}
-      labelTextColor="inherit:lighter(1.2)"
+      labelTextColor="rgba(0, 0, 0, .65)"
       style={fontStyles}
       motionStiffness={90}
       motionDamping={15}

@@ -1,5 +1,7 @@
 import chalk from 'chalk';
 import { humanizeDuration } from './utils';
+import { StatsResult } from './analyze/stats';
+import { FolderStats } from './analyze/folder';
 
 export class Logger {
 
@@ -20,8 +22,8 @@ export interface AnsiChartConfig<T, U = keyof T> {
   row: U;
   value: U;
 }
-export function bg(text: string) {
-  return chalk.bgBlack.cyan(text);
+export function bg(text: string, fn = 'cyan') {
+  return chalk.bgBlack[fn](text);
 }
 
 export function fg(text, time) {
@@ -38,29 +40,22 @@ export function fg(text, time) {
 }
 
 
-export function ansiChart<T extends object>(
-  data: T[],
-  { row, value }: AnsiChartConfig<T>,
+export function ansiChart(
+  data: FolderStats[],
+  highlights: StatsResult,
+  { row, value }: AnsiChartConfig<FolderStats>,
   options?: { limit: number },
 ): string {
   const maxWidth = 10;
   const shortedData = data.sort((a, b) => Number(b[value]) - Number(a[value]));
   const limitedData = options && options.limit ? shortedData.slice(0, options.limit) : shortedData;
 
-  const { sum, max } = limitedData.reduce((prev, item) => {
-    const v = Number(item[value]);
-    return {
-      max: Math.max(prev.max, v),
-      sum: prev.sum + v,
-    };
-  }, { max: -Infinity, sum: 0 });
-
   return limitedData.map(item => {
     const label = item[row];
     const v = Number(item[value]);
-    const barLength = Math.max(1, Math.round(v * maxWidth / max));
+    const barLength = Math.max(1, Math.round(v * maxWidth / highlights.max));
     const padLength = 10 - barLength;
-    const barColor = v > sum * 1.5 / limitedData.length ? chalk.yellowBright : chalk.greenBright;
+    const barColor = highlights.outliers.find(({ path }) => path === label) ? chalk.yellowBright : chalk.greenBright;
     return [
       '  ',
       barColor(new Array(barLength).fill('▇').join('')),

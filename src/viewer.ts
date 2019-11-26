@@ -8,6 +8,7 @@ import { AddressInfo } from 'net';
 import { createAssetsFilter, getRelativePath, getNodeModulesRelativePath, getLoadersIdentify } from './utils';
 import { Folder, statsFolder, getFolderTime, getContextTime, FolderStats, moduleDataToFolderStats } from './analyze/folder';
 import { ModuleProfiling, MISC, ModuleData } from './ProfilingAnalyzer';
+import { stats, Stats } from './analyze/stats';
 
 const projectRoot = path.resolve(__dirname, '..');
 const title = `${process.env.npm_package_name || 'Webpack Profiling Analyzer'} [${Date.now()}]`;
@@ -71,11 +72,10 @@ export function generateProfileData(context, profilingMap: ModuleProfiling, opti
 
 export interface ClientData {
   env: Env;
-  raw?: {};
-  stats: {
-    context?: FolderStats[];
-    node_modules?: FolderStats[];
+  raw?: {
+    [key in 'context' | 'node_modules']: FolderStats[];
   };
+  stats: Stats;
   plugins: {};
   loaders: FolderStats[];
   miscTime: number;
@@ -105,16 +105,23 @@ export function generateClientData(profileData: ProfileData, env: Env): ClientDa
   const nodeModulesTime = getFolderTime(profileData.node_modules.children['node_modules'] as Folder);
   const contextTime = getContextTime(context);
 
+  const loaderRecord = statsFolder(profileData.loaders);
+  const contextRecord = moduleDataToFolderStats(context);
+
   return {
     env,
     stats: {
-      context: moduleDataToFolderStats(context),
-      node_modules
+      loaders: stats(loaderRecord),
+      context: stats(contextRecord),
+      node_modules: stats(node_modules),
     },
-    // raw: profileData,
+    raw: {
+      context: contextRecord,
+      node_modules,
+    },
     miscTime,
     plugins: {},
-    loaders: statsFolder(profileData.loaders),
+    loaders: loaderRecord,
     summary: [{
       type: 'summary',
       misc: miscTime,

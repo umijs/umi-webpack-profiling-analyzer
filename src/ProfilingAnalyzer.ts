@@ -6,6 +6,7 @@ import { Compiler } from 'webpack';
 import { startAnalyzerServer, generateProfileData, Server, generateClientData } from './viewer';
 import { getModuleName, getModuleLoaders, generateStaticReport, humanizeDuration } from './utils';
 import { Logger, bg, fg, ansiChart } from './logger';
+import { humanizeStats } from './analyze/stats';
 
 const HOOKS_NS = 'ProfilingAnalyzer';
 export const MISC = Symbol('misc');
@@ -57,6 +58,9 @@ export class ProfilingAnalyzer {
 
   public moduleSuccessed(module) {
     const name = getModuleName(module);
+    if (name.includes('viewer.jsx')) {
+      console.log('>> moduleSuccessed', module.constructor);
+    }
     if (this.moduleProfiling[name]) {
       this.moduleProfiling[name].end = Date.now();
       this.moduleProfiling[name].timeConsume = Date.now() - this.moduleProfiling[name].start;
@@ -105,17 +109,21 @@ export class ProfilingAnalyzer {
 
   public generateConsoleOutput(profileData, env) {
     const clientData = generateClientData(profileData, env);
-    const { miscTime, loaders, stats } = clientData;
+    const { miscTime, loaders, raw, stats } = clientData;
 
     return this.options.logger.log([
       bg('Webpack Build Time Analyze'),
+      '',
+      bg('Highlights:', 'whiteBright'),
+      humanizeStats(stats),
+      '',
       `General output time took: ${bg(fg(humanizeDuration(miscTime), miscTime))}`,
       `Loaders:`,
-      ansiChart(loaders, { row: 'path', value: 'timeConsume' }),
+      ansiChart(loaders, stats.loaders, { row: 'path', value: 'timeConsume' }),
       'Top 5 context modules:',
-      ansiChart(stats.context, { row: 'path', value: 'timeConsume' }, { limit: 5 }),
+      ansiChart(raw.context, stats.context, { row: 'path', value: 'timeConsume' }, { limit: 5 }),
       'Top 5 node_modules modules:',
-      ansiChart(stats.node_modules, { row: 'path', value: 'timeConsume' }, { limit: 5 })
+      ansiChart(raw.node_modules, stats.node_modules, { row: 'path', value: 'timeConsume' }, { limit: 5 })
     ]);
   }
 

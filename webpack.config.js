@@ -99,7 +99,9 @@ module.exports = (opts = {}) => {
       ]
     },
     plugins: [
-      new ProfilingAnalyzer()
+      new ProfilingAnalyzer({
+        // analyzerMode: 'none'
+      })
     ]
   };
 };

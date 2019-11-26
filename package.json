@@ -91,5 +91,8 @@
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript"
+  },
+  "dependencies": {
+    "simple-statistics": "^7.0.7"
   }
 }
