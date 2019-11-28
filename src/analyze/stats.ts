@@ -32,6 +32,15 @@ export function outlier(quartiles: Quantiles, value: number) {
  * @returns quantiles, max and outliers from stats
  */
 export function stats(folderStats: FolderStats[]): StatsResult {
+
+  if (!folderStats.length) {
+    return {
+      quantiles: null,
+      max: Infinity,
+      outliers: [],
+    };
+  }
+
   const data = folderStats.map(v => v.timeConsume);
   const quantiles: Quantiles = [quantile(data, 0.25), quantile(data, 0.5), quantile(data, 0.75) ];
 

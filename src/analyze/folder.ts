@@ -67,7 +67,10 @@ export function dfs(
   tree: Folder,
   iterator: (m: Module) => void,
 ) {
-  // 深度遍历
+  // 深度遍历`
+  if (!tree) {
+    return;
+  }
   const { children = {} } = tree;
   for (const key in children) {
     const child = children[key];
@@ -97,6 +100,9 @@ export interface FolderStats {
 }
 
 export function statsFolder(folder: Folder): FolderStats[] {
+  if (!folder) {
+    return [];
+  }
   const { children = {} } = folder;
   return Object.keys(children).map(key => {
     const child = children[key];
