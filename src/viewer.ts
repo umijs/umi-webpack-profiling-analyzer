@@ -101,7 +101,7 @@ const emptyClientData: ClientData = {
   optimizeTime: 0,
 };
 
-export function generateClientData(profileData: ProfileData, env: Env): ClientData {
+export function generateClientData(profileData: ProfileData, env: Env = { context: '' }): ClientData {
   if (!profileData) {
     return emptyClientData;
   }
@@ -142,7 +142,7 @@ export function generateClientData(profileData: ProfileData, env: Env): ClientDa
   };
 }
 
-export async function startAnalyzerServer(profileData, options, env): Promise<Server> {
+export async function startAnalyzerServer(profileData, options, env = { context: '' }): Promise<Server> {
   const {
     port = 8888,
     host = '127.0.0.1',
