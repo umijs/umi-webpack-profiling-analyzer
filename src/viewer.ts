@@ -7,7 +7,7 @@ import { AddressInfo } from 'net';
 
 import { createAssetsFilter, getRelativePath, getNodeModulesRelativePath, getLoadersIdentify } from './utils';
 import { Folder, statsFolder, getFolderTime, getContextTime, FolderStats, moduleDataToFolderStats } from './analyze/folder';
-import { ModuleProfiling, MISC, ModuleData } from './ProfilingAnalyzer';
+import { ModuleProfiling, MISC, ModuleData, OPTIMIZE } from './ProfilingAnalyzer';
 import { stats, Stats } from './analyze/stats';
 
 const projectRoot = path.resolve(__dirname, '..');
@@ -27,6 +27,7 @@ export interface ProfileData {
   context: {[key: string]: ModuleData};
   loaders: Folder;
   misc: Folder;
+  optimize: Folder;
   node_modules: Folder;
 }
 
@@ -41,6 +42,7 @@ export function generateProfileData(context, profilingMap: ModuleProfiling, opti
   const excludeAssetsFilter = createAssetsFilter(excludeAssets);
   const groupedProfilingMap = {
     misc: new Folder(),
+    optimize: new Folder(),
     loaders: new Folder(),
     context: {},
     node_modules: new Folder(),
@@ -48,6 +50,10 @@ export function generateProfileData(context, profilingMap: ModuleProfiling, opti
 
   if (profilingMap[MISC]) {
     groupedProfilingMap.misc.addModule(profilingMap[MISC]);
+  }
+
+  if (profilingMap[OPTIMIZE]) {
+    groupedProfilingMap.optimize.addModule(profilingMap[OPTIMIZE]);
   }
 
   for (const key in profilingMap) {
@@ -79,6 +85,7 @@ export interface ClientData {
   plugins: {};
   loaders: FolderStats[];
   miscTime: number;
+  optimizeTime: number;
   summary: unknown[];
 }
 
@@ -91,6 +98,7 @@ const emptyClientData: ClientData = {
   loaders: [],
   summary: [],
   miscTime: 0,
+  optimizeTime: 0,
 };
 
 export function generateClientData(profileData: ProfileData, env: Env): ClientData {
@@ -99,6 +107,7 @@ export function generateClientData(profileData: ProfileData, env: Env): ClientDa
   }
 
   const miscTime = getFolderTime(profileData.misc);
+  const optimizeTime = getFolderTime(profileData.optimize);
   const { context } = profileData;
   const node_modules = statsFolder(profileData.node_modules.children['node_modules'] as Folder);
 
@@ -120,11 +129,13 @@ export function generateClientData(profileData: ProfileData, env: Env): ClientDa
       node_modules,
     },
     miscTime,
+    optimizeTime,
     plugins: {},
     loaders: loaderRecord,
     summary: [{
       type: 'summary',
       misc: miscTime,
+      optimize: optimizeTime,
       contextTime,
       nodeModulesTime,
     }],

@@ -10,6 +10,7 @@ import { humanizeStats } from './analyze/stats';
 
 const HOOKS_NS = 'ProfilingAnalyzer';
 export const MISC = Symbol('misc');
+export const OPTIMIZE = Symbol('optimize');
 export const NS = path.dirname(fs.realpathSync(__filename));
 
 export interface ProfilingAnalyzerOptions {
@@ -28,6 +29,7 @@ export interface ModuleData {
 
 export interface ModuleProfiling {
   [MISC]?: ModuleData;
+  [OPTIMIZE]?: ModuleData;
   [key: string]: ModuleData;
 }
 
@@ -56,11 +58,20 @@ export class ProfilingAnalyzer {
     };
   }
 
+  public startOptimize() {
+    this.moduleProfiling[OPTIMIZE] = {
+      loaders: [],
+      start: Date.now(),
+      end: null,
+    };
+  }
+
+  public afterOptimize() {
+    this.moduleProfiling[OPTIMIZE].end = Date.now();
+  }
+
   public moduleSuccessed(module) {
     const name = getModuleName(module);
-    if (name.includes('viewer.jsx')) {
-      console.log('>> moduleSuccessed', module.constructor);
-    }
     if (this.moduleProfiling[name]) {
       this.moduleProfiling[name].end = Date.now();
       this.moduleProfiling[name].timeConsume = Date.now() - this.moduleProfiling[name].start;
@@ -94,6 +105,10 @@ export class ProfilingAnalyzer {
     compiler.hooks.compilation.tap(`${HOOKS_NS}:beforeRun`, compilation => {
       compilation.hooks.buildModule.tap(`${HOOKS_NS}:buildModule`, this.moduleEnter.bind(this));
       compilation.hooks.succeedModule.tap(`${HOOKS_NS}:successedModule`, this.moduleSuccessed.bind(this));
+
+      // stats optimize time
+      compilation.hooks.optimizeChunkAssets.tap(`${HOOKS_NS}:startOptimizeAssets`, this.startOptimize.bind(this));
+      compilation.hooks.afterOptimizeChunkAssets.tap(`${HOOKS_NS}:afterOptimizeAssets`, this.afterOptimize.bind(this))
     });
 
     compiler.hooks.done.tapAsync(`${HOOKS_NS}:done`, this.done.bind(this));
@@ -109,7 +124,7 @@ export class ProfilingAnalyzer {
 
   public generateConsoleOutput(profileData, env) {
     const clientData = generateClientData(profileData, env);
-    const { miscTime, loaders, raw, stats } = clientData;
+    const { miscTime, optimizeTime, loaders, raw, stats } = clientData;
 
     return this.options.logger.log([
       bg('Webpack Build Time Analyze'),
@@ -118,6 +133,7 @@ export class ProfilingAnalyzer {
       humanizeStats(stats),
       '',
       `General output time took: ${bg(fg(humanizeDuration(miscTime), miscTime))}`,
+      `Optimize assets time took ${bg(fg(humanizeDuration(optimizeTime), optimizeTime))}`,
       `Loaders:`,
       ansiChart(loaders, stats.loaders, { row: 'path', value: 'timeConsume' }),
       'Top 5 context modules:',

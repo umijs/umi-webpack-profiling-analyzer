@@ -11,6 +11,9 @@ export default function Summary({ data }) {
         <dt>General output time took:</dt>
         <dd>{humanizeDuration(data[0].misc)}</dd>
 
+        <dt>Optimize assets time took:</dt>
+        <dd>{humanizeDuration(data[0].optimize)}</dd>
+
         <dt style={{ paddingLeft: 8 }}>In context: </dt>
         <dd>{humanizeDuration(data[0].contextTime)}</dd>
 
