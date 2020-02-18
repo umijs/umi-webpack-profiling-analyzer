@@ -68,7 +68,6 @@
     "eslint-config-react": "^1.1.7",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.16.0",
-    "express": "^4.17.1",
     "file-loader": "^4.2.0",
     "less": "^3.0.0",
     "less-loader": "^5.0.0",
@@ -76,7 +75,6 @@
     "mkdirp": "^0.5.1",
     "mocha": "^6.2.2",
     "nyc": "^14.1.1",
-    "opener": "^1.5.1",
     "prettier": "^1.16.4",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
@@ -93,6 +91,8 @@
     "extends": "@istanbuljs/nyc-config-typescript"
   },
   "dependencies": {
+    "opener": "^1.5.1",
+    "express": "^4.17.1",
     "simple-statistics": "^7.0.7"
   }
 }
