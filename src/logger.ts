@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import * as chalk from 'chalk';
 import { humanizeDuration } from './utils';
 import { StatsResult } from './analyze/stats';
 import { FolderStats } from './analyze/folder';

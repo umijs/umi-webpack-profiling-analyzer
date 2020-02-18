@@ -93,6 +93,7 @@
   "dependencies": {
     "opener": "^1.5.1",
     "express": "^4.17.1",
+    "chalk": "~3.0.0",
     "simple-statistics": "^7.0.7"
   }
 }
