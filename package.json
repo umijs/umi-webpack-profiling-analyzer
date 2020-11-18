@@ -78,7 +78,7 @@
     "prettier": "^1.16.4",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
-    "semantic-release": "^15.13.27",
+    "semantic-release": "^17.2.3",
     "source-map-support": "^0.5.16",
     "style-loader": "^1.0.0",
     "ts-node": "^8.5.0",
